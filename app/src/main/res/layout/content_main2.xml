@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".Main2Activity"
+    tools:openDrawer="start"
+    tools:showIn="@layout/activity_main2">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:id="@+id/store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="ร้าน"
+             />
+
+        <TextView
+            android:id="@+id/name_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XXXXXXX"
+             />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50sp"
+        android:layout_marginTop="40dp"
+        android:text="คิวของคุณ"
+        android:textSize="20dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/num_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15sp"
+            android:text="0"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="8dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="18dp"
+                android:text="Pin : "/>
+
+            <TextView
+                android:id="@+id/et_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="xxxx"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textServiced"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="หมายเลขนี้ได้รับการบริการไปแล้ว"
+                android:textSize="20dp"
+                android:textColor="#FF0000"/>
+
+            <TextView
+                android:id="@+id/textShow0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ถึงคิวของคุณแล้ว"
+                android:textStyle="bold"
+                android:textSize="24dp"/>
+
+            <TextView
+                android:id="@+id/textShow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:text="จำนวนคิวรอ :"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/remain_q"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/textShow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="คิว"
+                android:textSize="20dp"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textAdd1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="กด"
+                android:textSize="18dp"
+                />
+            <TextView
+                android:id="@+id/textAdd2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=" เพิ่มหมายเลขคิว "
+                android:textSize="18dp"
+                android:textColor="#FED82F"/>
+            <TextView
+                android:id="@+id/textAdd3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="เพื่อทำรายการแจ้งเตือนใหม่"
+                android:textSize="18dp"
+                />
+            <TextView
+                android:id="@+id/textShow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:text="รอคิวประมาณ :"
+                android:textSize="20dp"  />
+
+            <TextView
+                android:id="@+id/waiting_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="xxx"
+                android:textSize="18dp"  />
+
+            <TextView
+                android:id="@+id/textShow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="นาที"
+                android:textSize="18dp"  />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="25dp">
+
+        <Button
+            android:id="@+id/fill_button"
+            android:layout_width="300dp"
+            android:layout_height="65dp"
+            android:text="เพิ่มรายการแจ้งเตือน" />
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="300dp"
+            android:layout_height="65dp"
+            android:text="ลบรายการแจ้งเตือนนี้" />
+
+        <Button
+            android:id="@+id/decline_button"
+            android:layout_width="300dp"
+            android:layout_height="65dp"
+            android:text="ลบรายการ"
+            android:layout_marginLeft="20dp"
+            />
+    </LinearLayout>
+
+
+
+</LinearLayout>

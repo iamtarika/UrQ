@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    >
+
+    <TextView
+        android:id="@+id/nameReserveStore"
+        android:layout_width="217dp"
+        android:layout_height="65dp"
+        android:background="#ECEFF1"
+        android:paddingLeft="15dp"
+        android:paddingTop="16dp"
+        android:text="ชื่อร้าน"
+        android:textColor="#000000"
+        android:textSize="21dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="65dp"
+        android:layout_gravity="fill"
+        android:background="#ECEFF1"
+        android:paddingTop="18dp"
+        android:textSize="18dp"
+        android:text="เหลืออีก" />
+
+    <TextView
+        android:id="@+id/qReserveStore"
+        android:layout_width="48dp"
+        android:layout_height="65dp"
+        android:layout_gravity="fill"
+        android:background="#ECEFF1"
+        android:textSize="21dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="16dp"
+        android:text="00"/>
+
+    <TextView
+        android:layout_width="61dp"
+        android:layout_height="65dp"
+        android:layout_gravity="fill"
+        android:background="#ECEFF1"
+        android:textSize="18dp"
+        android:paddingTop="18dp"
+        android:text="คิว" />
+
+
+
+</LinearLayout>
