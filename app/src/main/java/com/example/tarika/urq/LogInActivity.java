@@ -50,6 +50,7 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
+
     private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 /////////////////////////
 
@@ -60,6 +61,8 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_log_in);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
