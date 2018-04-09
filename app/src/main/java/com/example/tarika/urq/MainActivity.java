@@ -119,7 +119,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
         list.clear();
-        Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/CmPrasanmit.ttf");
+        final Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+        final Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
         tv_specify_q.setTypeface(tf_1);
         btn_fill_inform.setTypeface(tf_1);
 
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
-
+                    list.clear();
                     View headerView = navigationView.getHeaderView(0);
                     nameGoogle = (TextView) headerView.findViewById(R.id.nameGoogle);
                     textEmail =(TextView) headerView.findViewById(R.id.emailGoogle);
@@ -146,6 +147,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     textEmail.setText(user.getEmail());
                     imageView = (ImageView)headerView.findViewById(R.id.imageView);
                     Glide.with(headerView.getContext()).load(user.getPhotoUrl()).into(imageView);
+
+                    nameGoogle.setTypeface(tf_2);
+                    textEmail.setTypeface(tf_1);
 
                     mRootRef.child("customer").child(user.getUid() + "").addValueEventListener(new ValueEventListener() {
                         @Override
@@ -391,9 +395,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             nameStore.setText(l_search.getName_shop());
             qStore.setText(l_search.getQ_shop());
 
-            Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/CmPrasanmit.ttf");
-            nameStore.setTypeface(tf_1);
+            Typeface tf_1 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+            Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+
+            nameStore.setTypeface(tf_2);
             qStore.setTypeface(tf_1);
+
             textShowList2_1.setTypeface(tf_1);
             textShowList2_2.setTypeface(tf_1);
 

@@ -1,5 +1,6 @@
 package com.example.tarika.urq;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,6 +52,12 @@ public class SearchStoreActivity extends AppCompatActivity {
 
         listViewStore = (ListView)findViewById(R.id.listViewStore);
         testData = (TextView)findViewById(R.id.testData);
+
+
+
+
+
+
 
         list = new ArrayList<ListSearchStore>();
 
@@ -137,6 +144,18 @@ public class SearchStoreActivity extends AppCompatActivity {
 
             TextView nameStore = (TextView)view.findViewById(R.id.nameStore);
             TextView qStore = (TextView)view.findViewById(R.id.qStore);
+            TextView tvSearch1 = (TextView)view.findViewById(R.id.tvSearch1);
+            TextView tvSearch2 = (TextView)view.findViewById(R.id.tvSearch2);
+
+            Typeface tf_1 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+            Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+
+            nameStore.setTypeface(tf_2);
+            qStore.setTypeface(tf_1);
+
+            tvSearch1.setTypeface(tf_1);
+            tvSearch2.setTypeface(tf_1);
+
 
             nameStore.setText(l_search.getName_shop());
             qStore.setText(l_search.getQ_shop());

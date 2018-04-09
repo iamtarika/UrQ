@@ -1,6 +1,7 @@
 package com.example.tarika.urq;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -140,6 +141,16 @@ public class ReserveOnlineActivity extends AppCompatActivity {
 
             TextView nameStore = (TextView)view.findViewById(R.id.nameReserveStore);
             TextView qStore = (TextView)view.findViewById(R.id.qReserveStore);
+            TextView tvListView3_1 = (TextView)view.findViewById(R.id.tvListView3_1);
+            TextView tvListView3_2 = (TextView)view.findViewById(R.id.tvListView3_2);
+
+            Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+            Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+
+            nameStore.setTypeface(tf_2);
+            qStore.setTypeface(tf_1);
+            tvListView3_1.setTypeface(tf_1);
+            tvListView3_2.setTypeface(tf_1);
 
             nameStore.setText(l_search.getName_shop());
             qStore.setText(l_search.getQ_shop());

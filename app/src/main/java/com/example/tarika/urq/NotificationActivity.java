@@ -57,7 +57,7 @@ public class NotificationActivity extends AppCompatActivity {
     private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     boolean check = false;
-    Button btn_notification_save ;
+    //Button btn_notification_save ;
     String notificationTypeBtn;
 
 
@@ -105,7 +105,7 @@ public class NotificationActivity extends AppCompatActivity {
         location = getIntent().getExtras().getString("location");
         num_text = getIntent().getExtras().getString("myNumber");
 
-        btn_notification_save = (Button) findViewById(R.id.btn_notification_save);
+        //btn_notification_save = (Button) findViewById(R.id.btn_notification_save);
 
 
         mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
@@ -544,55 +544,13 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
 
+/*
     public void btnSaveNotification(View view) {
-
-      /*  if(view==btn_notification_save){
-            mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-                    notificationTypeBtn = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                            child(location + "").child("notification").child("type").getValue());
-                    String notificationDetailTypeBtn = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                            child(location + "").child("notification").child("detailType").getValue());
-                    String notificationDetailTypeBtn2 = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                            child(location + "").child("notification").child("detailType2").getValue());
-
-                    if (notificationTypeBtn.equals("0")) {
-                        //ทุกคิว
-                        finish();
-                        onBackPressed();
-                    } else if (notificationTypeBtn.equals("1")) {
-                        //เต็มตัวเลข
-                        DatabaseReference mCodeNotificationBtnSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
-                                .child("notification").child("detailType");
-                        mCodeNotificationBtnSound.setValue(ed_add_num.getText().toString() + "");
-                        finish();
-                        onBackPressed();
-                    } else if (notificationTypeBtn.equals("2")) {
-                        //spinner
-                        finish();
-                        onBackPressed();
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-*/
         finish();
         onBackPressed();
-
     }
 
+*/
 
 
     @Override

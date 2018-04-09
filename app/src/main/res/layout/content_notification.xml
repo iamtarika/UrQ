@@ -110,13 +110,13 @@
         />
 
 
-    <Button
+  <!--  <Button
         android:id="@+id/btn_notification_save"
         android:onClick="btnSaveNotification"
         android:layout_width="250dp"
         android:layout_height="65dp"
         android:layout_marginTop="15dp"
         android:layout_gravity="center"
-        android:text="บันทึกการเปลี่ยนแปลง" />
+        android:text="บันทึกการเปลี่ยนแปลง" /> -->
 
 </LinearLayout>

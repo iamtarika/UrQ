@@ -7,11 +7,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_log_in">LogInActivity</string>
-    <string name="title_activity_search_store">SearchStoreActivity</string>
-    <string name="title_activity_reserve_online">ReserveOnlineActivity</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_fill">FillActivity</string>
-    <string name="title_activity_notification">NotificationActivity</string>
-    <string name="title_activity_search">SearchActivity</string>
-    <string name="title_activity_reservation">ReservationActivity</string>
+    <string name="title_activity_search_store">ค้นหาร้านค้าทั้งหมด</string>
+    <string name="title_activity_reserve_online">จองคิวออนไลน์</string>
+    <string name="title_activity_main2">UrQ</string>
+    <string name="title_activity_fill">เพิ่มคิว</string>
+    <string name="title_activity_notification">ตั้งค่าการแจ้งเตือน</string>
+    <string name="title_activity_search">ค้นหาร้านค้า</string>
+    <string name="title_activity_reservation">จองคิว</string>
 </resources>

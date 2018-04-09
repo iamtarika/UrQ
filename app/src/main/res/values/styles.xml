@@ -17,4 +17,151 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="default_text">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/default_text</item>
+    </style>
+
+
+    <style name="verify_text">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/verify_text</item>
+
+    </style>
+
+    <style name="vague_text">
+        <item name="android:textSize">@dimen/text_size_17</item>
+        <item name="android:textColor">@color/vague_text</item>
+    </style>
+
+    <style name="name_stores">
+        <item name="android:textSize">@dimen/name_stores</item>
+        <item name="android:textColor">@color/name_stores</item>
+    </style>
+
+    <style name="num_q">
+        <item name="android:textSize">@dimen/num_q</item>
+        <item name="android:textColor">@color/num_q</item>
+    </style>
+
+    <style name="text_size_24">
+        <item name="android:textSize">@dimen/text_size_24</item>
+        <item name="android:textColor">@color/cancel_button</item>
+    </style>
+
+    <style name="text_size_20">
+        <item name="android:textSize">@dimen/text_size_20</item>
+        <item name="android:textColor">@color/default_text</item>
+    </style>
+
+    <style name="text_size_21">
+        <item name="android:textSize">@dimen/text_size_21</item>
+        <item name="android:textColor">@color/default_text</item>
+    </style>
+
+    <style name="text_size_18">
+        <item name="android:textSize">@dimen/text_size_18</item>
+        <item name="android:textColor">@color/default_text</item>
+    </style>
+
+    <style name="text_size_19">
+        <item name="android:textSize">@dimen/text_size_19</item>
+        <item name="android:textColor">@color/default_text</item>
+    </style>
+
+    <style name="title_main">
+        <item name="android:label">@string/app_name</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="cancel_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/cancel_button</item>
+    </style>
+
+    <style name="ok_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/ok_button</item>
+    </style>
+
+    <style name="edit_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/edit_button</item>
+    </style>
+
+    <style name="save_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/save_button</item>
+    </style>
+
+    <style name="add_list_q">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/addnumber_button</item>
+    </style>
+
+    <style name="logout_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/logout_button</item>
+    </style>
+
+    <style name="reserve_button">
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textColor">@color/text_button</item>
+        <item name="android:backgroundTint">@color/reserve_button</item>
+    </style>
+
+    <style name="topic_title">
+        <item name="android:textSize">@dimen/text_size_20</item>
+        <item name="android:textColor">@color/topic_color</item>
+    </style>
+
+    <style name="detail_alert">
+        <item name="android:textSize">@dimen/text_size_15</item>
+        <item name="android:textColor">@color/detail_color</item>
+    </style>
+
+    <style name="et_style_fill" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlActivated">@color/addnumber_button</item>
+    </style>
+
+    <style name="spinner_style_fill">
+        <item name="colorControlActivated">@color/addnumber_button</item>
+    </style>
+
+    <style name="switch_style" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/save_button</item>
+        <item name="colorSwitchThumbNormal">#f1f1f1</item>
+        <item name="android:colorForeground">#42221f1f</item>
+    </style>
+
+    <style name="et_style_noti" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlActivated">@color/save_button</item>
+        <item name="android:textSize">@dimen/text_size_22</item>
+    </style>
+
+    <style name="spinner_style_noti">
+        <item name="colorControlActivated">@color/save_button</item>
+    </style>
+
+    <style name="MyActionBar">
+        <item name="android:height">56dp</item>
+        <item name="height">56dp</item>
+    </style>
+
+
+    <!--use item name="drawerArrowStyle" if you are using dark primaryColor in your app, else remove it-->
+    <style name="MaterialDrawer.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">false</item>
+        <item name="color">@android:color/black</item>
+    </style>
+
+
+
 </resources>

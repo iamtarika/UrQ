@@ -1,6 +1,7 @@
 package com.example.tarika.urq;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -54,6 +55,7 @@ public class Main2Activity extends AppCompatActivity {
     int countQ =0;
     String countStatus = ".";
 
+    TextView nameStore;
     TextView textServiced;
     TextView textShow0;
     TextView textShow1;
@@ -63,6 +65,8 @@ public class Main2Activity extends AppCompatActivity {
     TextView textAdd1;
     TextView textAdd2;
     TextView textAdd3;
+    TextView textView;
+    TextView pin;
     TextView et_pin;
 
 
@@ -79,15 +83,18 @@ public class Main2Activity extends AppCompatActivity {
         delete_button = (Button)findViewById(R.id.delete_button);
 
 
-
+        nameStore =(TextView)findViewById(R.id.nameStore);
+        name_store =(TextView)findViewById(R.id.name_store);
         num_queqe =(TextView)findViewById(R.id.num_queue);
         temp = getIntent().getExtras().getString("location");
         num_text =getIntent().getExtras().getString("myNumber");
         num_queqe.setText(num_text);
         remain_q =(TextView)findViewById(R.id.remain_q);
+        textView =(TextView)findViewById(R.id.textView);
+        pin =(TextView)findViewById(R.id.pin) ;
         et_pin = (TextView)findViewById(R.id.et_pin);
 
-        name_store =(TextView)findViewById(R.id.name_store);
+
         waiting_time =(TextView)findViewById(R.id.waiting_time);
 
 
@@ -101,6 +108,28 @@ public class Main2Activity extends AppCompatActivity {
         textShow3 = (TextView)findViewById(R.id.textShow3);
         textShow4 = (TextView)findViewById(R.id.textShow4);
 
+        Typeface tf_1= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+        Typeface tf_2= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+
+
+        nameStore.setTypeface(tf_2);    //ร้าน
+        name_store.setTypeface(tf_2);   //หมูสองชั้น
+        num_queqe.setTypeface(tf_2);    //เลขคิวตัวใหญ่
+        remain_q .setTypeface(tf_2);    //เลขคิว 0
+        textView.setTypeface(tf_2);     //คิวของคุณ
+        pin.setTypeface(tf_2);          //pin
+        et_pin.setTypeface(tf_1);       //pin xxxx สี่หลัก
+        waiting_time.setTypeface(tf_2); // เวลารอโดยประมาณ
+
+        textServiced.setTypeface(tf_2); //หมายเลขนี้ได้รับการบริการไปแล้ว
+        textAdd1.setTypeface(tf_2);     //กด
+        textAdd2.setTypeface(tf_2);     //เพิ่มหมายเลขคิว
+        textAdd3.setTypeface(tf_2);     //เพื่อทำรายการแจ้งเตือนใหม่
+        textShow0.setTypeface(tf_2);    //ถึงคิวของคุณแล้ว
+        textShow1.setTypeface(tf_2);    //จำนวนคิวรอ :
+        textShow2.setTypeface(tf_2);    //คิว
+        textShow3.setTypeface(tf_2);    //รอคิวประมาณ :
+        textShow4.setTypeface(tf_2);    //นาที
 
 
         mRootRef.child("user").child(temp+"").addValueEventListener(new ValueEventListener() {
@@ -259,8 +288,11 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
                 DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(temp+"");
+                DatabaseReference db_node_1 = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(temp+"").child("notification");
                 db_node.removeValue();
+                db_node_1.removeValue();
                 startActivity(intent);
             }
         });
