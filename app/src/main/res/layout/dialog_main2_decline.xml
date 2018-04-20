@@ -13,7 +13,7 @@ android:padding="30dp">
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="คุณต้องการลบรายการคิวนี้หรือไม่?"
-    android:textSize="20dp"
+    android:textSize="@dimen/text_size_30"
     />
 
 <LinearLayout
@@ -24,21 +24,25 @@ android:padding="30dp">
 
     <Button
         android:id="@+id/btn_dialog_clear"
-        android:textSize="18dp"
         android:layout_width="140dp"
         android:layout_height="55dp"
         android:onClick="ClickButtonDialogClear"
-        android:text="ใช่" />
+        android:text="ใช่"
+        android:textSize="@dimen/text_size_30"
+        android:backgroundTint="@color/ok_button"
+        android:textColor="#FFFFFF"/>
 
 
     <Button
         android:id="@+id/btn_dialog_cancel"
-        android:textSize="18dp"
         android:layout_width="140dp"
         android:layout_height="55dp"
         android:layout_marginLeft="20dp"
         android:onClick="ClickButtonDialogCancel"
-        android:text="ไม่" />
+        android:text="ไม่"
+        android:textSize="@dimen/text_size_30"
+        android:backgroundTint="@color/cancel_button"
+        android:textColor="#FFFFFF"/>
 
 
 </LinearLayout>

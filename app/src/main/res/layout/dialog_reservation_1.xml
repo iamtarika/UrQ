@@ -9,11 +9,13 @@
     android:padding="60dp">
 
     <TextView
+        android:id="@+id/tvShow1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="รายละเอียดการจอง"
-        android:textSize="20dp"
+        android:textColor="@color/default_text"
+        android:textSize="@dimen/text_size_35"
         />
 
     <LinearLayout
@@ -21,11 +23,13 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/tvShow2"
             android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:textColor="@color/default_text"
             android:text="ร้าน : "
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size_30"
             />
         <TextView
             android:id="@+id/tv_dialog_name_shop"
@@ -33,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="xxx"
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size_30"
             />
 
     </LinearLayout>
@@ -44,17 +48,19 @@
         android:layout_marginTop="20dp">
 
         <TextView
+            android:id="@+id/tvShow3"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/default_text"
             android:text="จำนวนคน :"
-            android:textSize="20dp"/>
+            android:textSize="@dimen/text_size_30"/>
 
         <TextView
             android:id="@+id/tv_dialog_reserve_no_customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="XX20"
-            android:textSize="20dp" />
+            android:textSize="@dimen/text_size_30" />
 
     </LinearLayout>
 
@@ -70,7 +76,10 @@
             android:layout_width="100dp"
             android:layout_height="55dp"
             android:onClick="ClickButtonLogout"
-            android:text="จอง" />
+            android:textSize="@dimen/text_size_30"
+            android:text="จอง"
+            android:backgroundTint="@color/ok_button"
+            android:textColor="#FFFFFF"/>
 
 
         <Button
@@ -79,7 +88,10 @@
             android:layout_height="55dp"
             android:layout_marginLeft="20dp"
             android:onClick="ClickButtonCancel"
-            android:text="ยกเลิก" />
+            android:textSize="@dimen/text_size_30"
+            android:text="ยกเลิก"
+            android:backgroundTint="@color/cancel_button"
+            android:textColor="#FFFFFF"/>
 
 
     </LinearLayout>

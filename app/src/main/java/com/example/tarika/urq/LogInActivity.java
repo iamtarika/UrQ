@@ -120,7 +120,7 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
             //goMainScreen();
             firebaseAuthWithGoogle(result.getSignInAccount());
         }else {
-            Toast.makeText(this, "No eiei",Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "No eiei",Toast.LENGTH_SHORT).show();
         }
     }
 

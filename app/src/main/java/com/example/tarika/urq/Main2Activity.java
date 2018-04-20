@@ -33,6 +33,7 @@ public class Main2Activity extends AppCompatActivity {
 
     Button btn_dialog_clear;
     Button btn_dialog_cancel;
+    TextView tv_dialog;
 
 
     TextView num_queqe;
@@ -108,8 +109,8 @@ public class Main2Activity extends AppCompatActivity {
         textShow3 = (TextView)findViewById(R.id.textShow3);
         textShow4 = (TextView)findViewById(R.id.textShow4);
 
-        Typeface tf_1= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
-        Typeface tf_2= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+        final Typeface tf_1= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+        final Typeface tf_2= Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
 
 
         nameStore.setTypeface(tf_2);    //ร้าน
@@ -136,12 +137,12 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                String shopName = String.valueOf(dataSnapshot.child("shopName").child("name").getValue());
+                String shopName = String.valueOf(dataSnapshot.child("shopData").child("nameShop").getValue());
                 name_store.setText(shopName);
 
                 String statusCheck = String.valueOf(dataSnapshot.child("qNumber").child(num_text).child("status").getValue());
                 //String repeatCheck = String.valueOf(dataSnapshot.child("qNumber").child(num_text).child("repeat").getValue());
-                String qType = String.valueOf(dataSnapshot.child("shopName").child("qType").getValue());
+                String qType = String.valueOf(dataSnapshot.child("shopData").child("qType").getValue());
 
                 String pin = String.valueOf(dataSnapshot.child("qNumber").child(num_text).child("pin").getValue());
                 et_pin.setText(pin);
@@ -302,8 +303,13 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(Main2Activity.this);
                 View mView = getLayoutInflater().inflate(R.layout.dialog_main2_decline,null);
+                tv_dialog =(TextView)mView.findViewById(R.id.tv_dialog) ;
                 btn_dialog_clear = (Button)mView.findViewById(R.id.btn_dialog_clear);
                 btn_dialog_cancel = (Button)mView.findViewById(R.id.btn_dialog_cancel);
+
+                tv_dialog.setTypeface(tf_2);
+                btn_dialog_clear.setTypeface(tf_2);
+                btn_dialog_cancel.setTypeface(tf_2);
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
                 dialog.show();;

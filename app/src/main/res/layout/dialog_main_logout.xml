@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="คุณต้องออกจากระบบหรือไม่?"
-        android:textSize="22dp"
+        android:textSize="@dimen/text_size_30"
         />
 
     <LinearLayout
@@ -27,7 +27,11 @@
             android:layout_width="140dp"
             android:layout_height="55dp"
             android:onClick="ClickButtonLogout"
-            android:text="ใช่" />
+            android:text="ใช่"
+            android:textSize="@dimen/text_size_25"
+            android:backgroundTint="@color/ok_button"
+            android:textColor="#FFFFFF"
+    />
 
 
         <Button
@@ -36,7 +40,11 @@
             android:layout_height="55dp"
             android:layout_marginLeft="20dp"
             android:onClick="ClickButtonCancel"
-            android:text="ยกเลิก" />
+            android:text="ยกเลิก"
+            android:textSize="@dimen/text_size_25"
+            android:backgroundTint="@color/cancel_button"
+            android:textColor="#FFFFFF"
+            />
 
 
     </LinearLayout>

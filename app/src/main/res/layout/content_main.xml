@@ -58,7 +58,7 @@
             android:layout_height="65dp"
             android:onClick="clickButtonEnter"
             android:text="เพิ่มรายการแจ้งเตือน"
-            android:textSize="34sp"
+            android:textSize="@dimen/text_size_30"
             android:backgroundTint="@color/addnumber_button"
             android:textColor="#FFFFFF"
             android:textStyle="bold"/>

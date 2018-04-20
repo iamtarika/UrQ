@@ -1,12 +1,16 @@
 package com.example.tarika.urq;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -92,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Button btn_main_dialog_Logout;
     Button btn_main_dialog_cancel;
 
+    TextView tv_dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,8 +128,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         final Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
         final Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
         tv_specify_q.setTypeface(tf_1);
-        btn_fill_inform.setTypeface(tf_1);
+        btn_fill_inform.setTypeface(tf_2);
 
+/*
+        ///////////////////////////////////////////////////////////////////////notification////////////////
+        String channelId = "defaultChannel";
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("มา แล้ว มา แล้ว")
+                .setContentText("8888888///8888888")
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1000, notificationBuilder.build());
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -134,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         firebaseAuth =FirebaseAuth.getInstance();
-        firebaseAuthListener =new FirebaseAuth.AuthStateListener() {
+        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -150,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     nameGoogle.setTypeface(tf_2);
                     textEmail.setTypeface(tf_1);
+
 
                     mRootRef.child("customer").child(user.getUid() + "").addValueEventListener(new ValueEventListener() {
                         @Override
@@ -182,14 +207,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     arr_2[m] = new String(noShop); // Uid
                                     arr_3[m] = new String(noQ);
 
-                                        mRootRef.child("user").addValueEventListener(new ValueEventListener() {
+
+
+
+                                    mRootRef.child("user").addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
 
                                                 for (int i = 0 ;i<Integer.parseInt(countAdd);i++){
 
                                                     for (DataSnapshot _shopSnapshot: dataSnapshot.getChildren()) {
-                                                        String nameAllUser = String.valueOf(_shopSnapshot.child("shopName").child("name").getValue());
+                                                        String nameAllUser = String.valueOf(_shopSnapshot.child("shopData").child("nameShop").getValue());
 
                                                         if (arr_1[i].equals(nameAllUser)){
 
@@ -292,12 +320,51 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     });
 
+/*การแจ้งเตือน
+                        mRootRef.child("customer").child(user.getUid() + "").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot shopSnapshot : dataSnapshot.child("Add").getChildren()) {
+
+                                    String soundCheck = String.valueOf(shopSnapshot.child("notification").child("sound").getValue());
+                                    String alarmCheck = String.valueOf(shopSnapshot.child("notification").child("alarm").getValue());
+
+                                    if (soundCheck.equals("0")){
+                                        //ปิดเสียง
+                                        if(alarmCheck.equals("0")){
+                                            //ปิดการแจ้งเตือน
+
+                                        }else if(alarmCheck.equals("1")){
+                                            //เปิดการแจ้งเตือน
+                                        }
+
+
+
+
+                                    }else if (soundCheck.equals("1")){
+                                        //เปิดเสียง
+
+
+                                    }
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+*/
+
                 }else {
                     GoLogInScrean();
                 }
             }
         };
-
 
 
 
@@ -311,15 +378,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     Intent intent = new Intent(getApplicationContext(), SearchStoreActivity.class);
                     startActivity(intent);
 
-                }else if(id == R.id.nav_gallery){
+                }else if(id == R.id.nav_reservation){
                     Intent intent = new Intent(getApplicationContext(), ReserveOnlineActivity.class);
                     startActivity(intent);
 
-                }else if(id == R.id.nav_slideshow){
+                }else if(id == R.id.nav_logout){
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_main_logout,null);
+
+                    TextView tv_dialog = (TextView)mView.findViewById(R.id.tv_dialog);
+                    tv_dialog.setTypeface(tf_2);
+
                     btn_main_dialog_Logout = (Button)mView.findViewById(R.id.btn_main_dialog_Logout);
                     btn_main_dialog_cancel = (Button)mView.findViewById(R.id.btn_main_dialog_cancel);
+
+                    btn_main_dialog_Logout.setTypeface(tf_2);
+                    btn_main_dialog_cancel.setTypeface(tf_2);
+
                     mBuilder.setView(mView);
                     final AlertDialog dialog = mBuilder.create();
                     dialog.show();;

@@ -63,8 +63,10 @@ public class ReserveOnlineActivity extends AppCompatActivity {
                 list.clear();
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
 
-                    String statusReserve = String.valueOf(shopSnapshot.child("shopName").child("statusReserve").getValue());
-                    if (statusReserve.equals("1")){
+                    String qType = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
+
+
+                    if (qType.equals("1")){
                         countOpenReserve = countOpenReserve +1;
                     }
 
@@ -77,9 +79,9 @@ public class ReserveOnlineActivity extends AppCompatActivity {
 
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
 
-                    String statusReserve = String.valueOf(shopSnapshot.child("shopName").child("statusReserve").getValue());
+                    String statusReserve = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
                     if (statusReserve.equals("1")){
-                        String shopName = String.valueOf(shopSnapshot.child("shopName").child("name").getValue());
+                        String shopName = String.valueOf(shopSnapshot.child("shopData").child("nameShop").getValue());
 
                         arr1[i] = new String(shopName);
 

@@ -1,6 +1,7 @@
 package com.example.tarika.urq;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -70,7 +71,11 @@ public class FillActivity extends AppCompatActivity {
         et_pin = (EditText)findViewById(R.id.et_pin);
         areaSpinner = (Spinner) findViewById(R.id.sp_location_q);
 
-
+        final Typeface tf_1 =Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+        final Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+        btn_fill_save.setTypeface(tf_2);
+        et_num_q.setTypeface(tf_2);
+        et_pin.setTypeface(tf_2);
 
         mRootRef.child("user").addValueEventListener(new ValueEventListener() {
             @Override
@@ -81,7 +86,7 @@ public class FillActivity extends AppCompatActivity {
                 final List<String> shop = new ArrayList<String>();
 
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
-                    String shopName = String.valueOf(shopSnapshot.child("shopName").child("name").getValue());
+                    String shopName = String.valueOf(shopSnapshot.child("shopData").child("nameShop").getValue());
                     shop.add(shopName);
                 }
 
@@ -133,7 +138,7 @@ public class FillActivity extends AppCompatActivity {
                         int i = 1;
                         for (DataSnapshot numSnapshot: dataSnapshot.getChildren()) {
                             if(temp == i){
-                                shopName = String.valueOf(numSnapshot.child("shopName").child("name").getValue());
+                                shopName = String.valueOf(numSnapshot.child("shopData").child("nameShop").getValue());
                             }
                             i++;
 
@@ -245,7 +250,7 @@ public class FillActivity extends AppCompatActivity {
                                     if (getPin.equals(et_pin.getText().toString())){
 
                                         noCustomer = String.valueOf(shopSnapshot.child("qNumber").child(et_num_q.getText().toString()+"").child("noCustomer").getValue());
-                                        String getQType = String.valueOf(shopSnapshot.child("shopName").child("qType").getValue());
+                                        String getQType = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
 
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

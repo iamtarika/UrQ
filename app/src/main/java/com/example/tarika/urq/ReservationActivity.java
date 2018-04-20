@@ -1,6 +1,9 @@
 package com.example.tarika.urq;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,6 +29,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 public class ReservationActivity extends AppCompatActivity {
@@ -77,6 +83,14 @@ public class ReservationActivity extends AppCompatActivity {
     String getNameFromUser;
     String numQnumber;
     String getQType;
+    int avgServiceTime;
+
+    TextView tvShow1;
+    TextView tvShow2;
+    TextView tvShow3;
+
+    TextView tv_rv_1;
+    TextView tv_rv_2;
 
     //@SuppressLint("WrongViewCast")
     @Override
@@ -91,6 +105,8 @@ public class ReservationActivity extends AppCompatActivity {
         name_reserve_store = (TextView)findViewById(R.id.name_reserve_store);
         text_reserve_time_open_close = (TextView)findViewById(R.id.text_reserve_time_open_close);
 
+        text_reserve_1 = (TextView)findViewById(R.id.text_reserve_1);
+        text_reserve_2 = (TextView)findViewById(R.id.text_reserve_2);
         text_reserve_3 = (TextView)findViewById(R.id.text_reserve_3);
         text_reserve_time_reserve = (TextView)findViewById(R.id.text_reserve_time_reserve);
         text_reserve_4 = (TextView)findViewById(R.id.text_reserve_4);
@@ -102,25 +118,48 @@ public class ReservationActivity extends AppCompatActivity {
         getName = getIntent().getExtras().getString("shopName");
 
         et_reserve_no_customer = (EditText)findViewById(R.id.et_reserve_no_customer) ;
+        tv_rv_1 =(TextView)findViewById(R.id.tv_rv_1);
+        tv_rv_2 =(TextView)findViewById(R.id.tv_rv_2);
+        btn_reserve = (Button)findViewById(R.id.btn_reserve);
 
 
+        Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+        Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+
+        name_reserve_store.setTypeface(tf_2);
+        text_reserve_time_open_close.setTypeface(tf_2);
+        text_reserve_1.setTypeface(tf_2);
+        text_reserve_2.setTypeface(tf_2);
+        text_reserve_3.setTypeface(tf_2);
+        text_reserve_time_reserve.setTypeface(tf_2);
+        text_reserve_4.setTypeface(tf_2);
+        text_reserve_5.setTypeface(tf_2);
+        text_reserve_q_wait.setTypeface(tf_2);
+        text_reserve_6.setTypeface(tf_2);
+        tv_rv_1.setTypeface(tf_2);
+        tv_rv_2.setTypeface(tf_2);
+        et_reserve_no_customer.setTypeface(tf_2);
+        btn_reserve.setTypeface(tf_2);
 
         mRootRef.child("user").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
 
-                    String shopName = String.valueOf(shopSnapshot.child("shopName").child("name").getValue());
+                    String shopName = String.valueOf(shopSnapshot.child("shopData").child("nameShop").getValue());
+                    String reserveStatus = String.valueOf(shopSnapshot.child("shopData").child("reserve").child("reserveStatus").getValue());
                     if (shopName.equals(getName)){
                         name_reserve_store.setText(shopName);
-                        String timeOpen = String.valueOf(shopSnapshot.child("shopName").child("time").child("open").getValue());
-                        String timeClose = String.valueOf(shopSnapshot.child("shopName").child("time").child("close").getValue());
-                        String timeReserve = String.valueOf(shopSnapshot.child("shopName").child("time").child("reserve").getValue());
-                        text_reserve_time_open_close.setText(timeOpen +" - " +timeClose);
-                        text_reserve_time_reserve.setText(timeReserve);
+                        String timeOpen = String.valueOf(shopSnapshot.child("shopData").child("time").child("open").getValue());
+                        String timeClose = String.valueOf(shopSnapshot.child("shopData").child("time").child("close").getValue());
+                        String timeReserveOpen = String.valueOf(shopSnapshot.child("shopData").child("reserve").child("reserveOpen").getValue());
+                        String timeReserveClose = String.valueOf(shopSnapshot.child("shopData").child("reserve").child("reserveClose").getValue());
+                        text_reserve_time_open_close.setText(timeOpen + " - " + timeClose);
+                        text_reserve_time_reserve.setText(timeReserveOpen + " - " + timeReserveClose);
                         getUid = String.valueOf(shopSnapshot.getKey());
-                        getTable = String.valueOf(shopSnapshot.child("shopName").child("numServer").getValue());
+                        getTable = String.valueOf(shopSnapshot.child("shopData").child("numServer").getValue());
 
                         int k=1;
                         countQ =0;
@@ -144,9 +183,27 @@ public class ReservationActivity extends AppCompatActivity {
 
                             k++;
                         }
+                            text_reserve_q_wait.setText(countQ+"");
 
 
+                        if(reserveStatus.equals("1")){
+                            //เปิดจอง
+                            tv_rv_1.setVisibility(View.VISIBLE);
+                            et_reserve_no_customer.setVisibility(View.VISIBLE);
+                            tv_rv_2.setVisibility(View.VISIBLE);
+                            btn_reserve.setVisibility(View.VISIBLE);
+
+                        }else if (reserveStatus.equals("0")){
+                            //ปิดจอง
+                            tv_rv_1.setTextColor(Color.parseColor("#cac8ca"));
+                            et_reserve_no_customer.setEnabled(false);
+                            tv_rv_2.setTextColor(Color.parseColor("#cac8ca"));
+                            btn_reserve.setEnabled(false);
+                           btn_reserve.setBackgroundColor(R.color.black_grey);
+                        }
                     }
+
+
 
 
                 }
@@ -169,7 +226,7 @@ public class ReservationActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(et_reserve_no_customer.getText().toString().equals("0")&&i2>=0){
-                    Toast.makeText(getApplicationContext(), "จำนวนลูกค้าจะเป็น0ไม่ได้" ,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "จำนวนที่จองจะเป็น0ไม่ได้" ,Toast.LENGTH_SHORT).show();
                     checkNo = false;
                     et_reserve_no_customer.setText("");
                 }
@@ -193,12 +250,29 @@ public class ReservationActivity extends AppCompatActivity {
         if (checkNo){
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ReservationActivity.this);
             View mView = getLayoutInflater().inflate(R.layout.dialog_reservation_1,null);
+
             btn_reserve_dialog_ok = (Button)mView.findViewById(R.id.btn_reserve_dialog_ok);
             btn_reserve_dialog_cancel = (Button)mView.findViewById(R.id.btn_reserve_dialog_cancel);
             tv_dialog_name_shop = (TextView)mView.findViewById(R.id.tv_dialog_name_shop);
-            tv_dialog_name_shop.setText(getName);
             tv_dialog_reserve_no_customer =(TextView)mView.findViewById(R.id.tv_dialog_reserve_no_customer);
+
+            tv_dialog_name_shop.setText(getName);
             tv_dialog_reserve_no_customer.setText(et_reserve_no_customer.getText());
+
+            tvShow1 = (TextView)mView.findViewById(R.id.tvShow1);
+            tvShow2 = (TextView)mView.findViewById(R.id.tvShow2);
+            tvShow3 = (TextView)mView.findViewById(R.id.tvShow3);
+
+            Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
+            Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
+            btn_reserve_dialog_ok.setTypeface(tf_2);
+            btn_reserve_dialog_cancel.setTypeface(tf_2);
+            tv_dialog_name_shop.setTypeface(tf_2);
+            tv_dialog_reserve_no_customer.setTypeface(tf_2);
+            tvShow1.setTypeface(tf_2);
+            tvShow2.setTypeface(tf_2);
+            tvShow3.setTypeface(tf_2);
+
             mBuilder.setView(mView);
             final AlertDialog dialog = mBuilder.create();
             dialog.show();
@@ -207,10 +281,10 @@ public class ReservationActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     numQnumber = String.valueOf(dataSnapshot.child(getUid+"").child("qNumber").getChildrenCount());
-                    getNameFromUser = String.valueOf(dataSnapshot.child(getUid+"").child("shopName").child("name").getValue());
-                    getQType = String.valueOf(dataSnapshot.child(getUid+"").child("shopName").child("qType").getValue());
+                    getNameFromUser = String.valueOf(dataSnapshot.child(getUid+"").child("shopData").child("nameShop").getValue());
+                    getQType = String.valueOf(dataSnapshot.child(getUid+"").child("shopData").child("qType").getValue());
                     temp = Integer.parseInt(numQnumber)+1; // ลำดับที่มันควรจะได้ (ที่สร้างขึ้นมาใหม่)
-
+                    avgServiceTime = Integer.parseInt(String.valueOf(dataSnapshot.child(getUid+"").child("shopData").child("avgServiceTime").getValue()));
 
                 }
 
@@ -221,7 +295,8 @@ public class ReservationActivity extends AppCompatActivity {
             });
             final Random rand = new Random();
             noRandomPin = rand.nextInt(9999-1000) + 1000;
-            btn_reserve_dialog_ok.setOnClickListener(new View.OnClickListener() {
+            btn_reserve_dialog_ok.setOnClickListener(
+                    new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -236,8 +311,14 @@ public class ReservationActivity extends AppCompatActivity {
                     DatabaseReference pin = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("pin");
                     pin.setValue(noRandomPin+"");
 
+                    DatabaseReference addType = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("addType");
+                    addType.setValue("1");
+
                     DatabaseReference repeat = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("repeat");
                     repeat.setValue(0+"");
+
+                    DatabaseReference id = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("id");
+                    id.setValue(temp+"");
 
                     DatabaseReference status = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("status");
                     if (countDoing<Integer.parseInt(getTable)){
@@ -247,11 +328,27 @@ public class ReservationActivity extends AppCompatActivity {
                     }
                     DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("qType");
                     mCodeQType.setValue(getQType+"");
+        //getTimeCurrent
+                    int mod_60 = avgServiceTime % 60 ;
+                    int divide_60 = (avgServiceTime - mod_60) / 60;
+                    DateFormat hr = new SimpleDateFormat("HH");
+                    DateFormat mi = new SimpleDateFormat("mm");
+                    int hr_1 = Integer.parseInt(hr.format(Calendar.getInstance().getTime()));
+                    int mi_1 = Integer.parseInt(mi.format(Calendar.getInstance().getTime()));
 
                     DatabaseReference timeIn = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("time").child("timeIn");
-                    timeIn.setValue("xx.xx");
+                    timeIn.setValue(hr_1+":"+mi_1);
+
+                    int mi_2 = mi_1+mod_60;
+                    if (mi_2>=60){
+                        hr_1=hr_1+1;
+                        mi_2 = mi_2%60;
+                    }
+                    int hr_2 = hr_1+divide_60;
+                        hr_2 = hr_2%24;
+
                     DatabaseReference timeOut = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("time").child("timeOut");
-                    timeOut.setValue("xx.xx");
+                    timeOut.setValue(hr_2+":"+mi_2);
 
                     // ในส่วนของ customer
                     DatabaseReference nameShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("nameShop");

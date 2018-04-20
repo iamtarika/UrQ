@@ -1,5 +1,6 @@
 package com.example.tarika.urq;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,18 +57,15 @@ public class SearchStoreActivity extends AppCompatActivity {
 
 
 
-
-
-
-
         list = new ArrayList<ListSearchStore>();
 
         mRootRef.child("user").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Is better to use a List, because you don't know the size
-                // of the iterator returned by dataSnapshot.getChildren() to
-                // initialize the array
+
+
+                list.clear();
+
                 countUser = String.valueOf(dataSnapshot.getChildrenCount());
                 arr1 = new String[Integer.parseInt(countUser)];
                 arr2 = new String[Integer.parseInt(countUser)];
@@ -75,7 +74,7 @@ public class SearchStoreActivity extends AppCompatActivity {
 
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
 
-                    String shopName = String.valueOf(shopSnapshot.child("shopName").child("name").getValue());
+                    String shopName = String.valueOf(shopSnapshot.child("shopData").child("nameShop").getValue());
 
                     arr1[i] = new String(shopName);
 
@@ -96,23 +95,21 @@ public class SearchStoreActivity extends AppCompatActivity {
                     list.add(l_search_store);
 
                     i++;
-                    // testData.setText(arr2[1]);
+
 
                 }
 
                 adapter = new ListSearchStore_adapter();
                 listViewStore.setAdapter(adapter);
-
-              /*  listViewStore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                listViewStore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(SearchStore.this, Reservation.class);
-                        intent.putExtra("location", position); // String
+                        Intent intent = new Intent(SearchStoreActivity.this, ReservationActivity.class);
+                        intent.putExtra("shopName", arr1[position]); // String ----> ส่งชื่อร้านไป
                         startActivity(intent);
 
                     }
                 });
-              */
 
             }
 

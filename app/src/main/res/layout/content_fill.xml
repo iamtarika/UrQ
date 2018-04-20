@@ -18,7 +18,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="40dp"
         android:text="ระบุสถานที่"
-        android:textSize="18dp"
+        android:textSize="@dimen/text_size_25"
         />
 
     <Spinner
@@ -29,7 +29,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="30sp"
         android:layout_marginRight="30sp"
-        android:textSize="22sp"
+        android:textSize="@dimen/text_size_30"
 
         />
 
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="หมายเลขคิว"
-        android:textSize="18dp"
+        android:textSize="@dimen/text_size_25"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"/>
 
@@ -52,7 +52,7 @@
         android:layout_marginRight="30sp"
         android:layout_marginLeft="30sp"
         android:textColorLink="@color/colorPrimaryDark"
-        android:textSize="22sp"
+        android:textSize="@dimen/text_size_30"
         android:layout_gravity="center"
 
         />
@@ -62,6 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ระบุ Pin ของคุณ"
+        android:textSize="@dimen/text_size_25"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"/>
 
@@ -75,11 +76,10 @@
         android:layout_marginLeft="30sp"
         android:textColorLink="@color/colorPrimaryDark"
         android:layout_gravity="center"
-
         android:background="@android:color/transparent"
         android:singleLine="true"
         android:letterSpacing="0.2"
-        android:textSize="29sp"
+        android:textSize="@dimen/text_size_30"
         />
 
     <Button
@@ -89,7 +89,9 @@
         android:text="บันทึก"
         android:onClick="clickButtonfillInformation"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
+        android:textSize="@dimen/text_size_30"
+        style="@style/add_list_q"
          />
 
 </LinearLayout>

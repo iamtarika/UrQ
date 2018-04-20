@@ -23,14 +23,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ร้านนี้เพื่อกดจอง"
-            android:textSize="25dp" />
+            android:textColor="@color/default_text"
+            android:textSize="@dimen/text_size_45" />
 
     </LinearLayout>
 
 
 
     <LinearLayout
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
@@ -38,18 +39,18 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#ECEFF1"
+            android:layout_height="70dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_reserve_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
+                android:textColor="@color/default_text"
                 android:text="เวลาเปิด-ปิด : "
-                android:textSize="20dp" />
+                android:textSize="@dimen/text_size_25" />
 
             <TextView
                 android:id="@+id/text_reserve_time_open_close"
@@ -58,32 +59,35 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:text="xx.00-xx.00"
-                android:textSize="20dp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_30" />
 
             <TextView
                 android:id="@+id/text_reserve_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="  น."
-                android:textSize="20dp" />
+                android:textColor="@color/default_text"
+                android:text=" น."
+                android:textSize="@dimen/text_size_25" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear_1"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#ECEFF1"
+            android:layout_height="70dp"
+
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_reserve_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:text="เปิดจองคิวเวลา : "
-                android:textSize="20dp" />
+                android:text="เปิดจองเวลา : "
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
 
             <TextView
                 android:id="@+id/text_reserve_time_reserve"
@@ -91,90 +95,99 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:text="xx.00"
-                android:textSize="20dp" />
+                android:text="xx.00-xx.00"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_30" />
             <TextView
                 android:id="@+id/text_reserve_4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="  น."
-                android:textSize="20dp" />
+                android:text=" น."
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear_2"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#ECEFF1"
+            android:layout_height="70dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_reserve_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:text="หากจองต้องรอ :"
-                android:textSize="22dp" />
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
 
 
             <TextView
                 android:id="@+id/text_reserve_q_wait"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="43dp"
                 android:layout_marginTop="10dp"
-                android:text=" 10 "
-                android:textSize="20dp" />
+                android:text=" 1x "
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_30" />
 
             <TextView
                 android:id="@+id/text_reserve_6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
                 android:layout_marginTop="10dp"
                 android:text="  คิว"
-                android:textSize="20dp" />
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#ECEFF1"
+            android:layout_height="70dp"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tv_rv_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="โปรดระบุจำนวนคน :"
-                android:textSize="20dp" />
+                android:text="ระบุจำนวนคนที่จอง :"
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
 
             <EditText
                 android:id="@+id/et_reserve_no_customer"
                 android:layout_width="40dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:inputType="number"
                 android:text="1"
+                android:gravity="center"
+                 android:layout_marginBottom="5dp"
                 android:layout_marginRight="15sp"
                 android:layout_marginLeft="15sp"
-                android:textColorLink="@color/colorPrimaryDark"
-                android:textSize="22sp"
+                android:textColorLink="@color/colorAccent"
+                android:textSize="@dimen/text_size_30"
                 android:layout_gravity="center"
-                android:gravity="center"
-
+                android:background="@drawable/edit_text_background"
                 />
 
 
             <TextView
+                android:id="@+id/tv_rv_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="คน"
-                android:textSize="20dp" />
+                android:textColor="@color/default_text"
+                android:textSize="@dimen/text_size_25" />
 
         </LinearLayout>
 
@@ -186,10 +199,13 @@
 
             <Button
                 android:id="@+id/btn_reserve"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
                 android:onClick="onClickReserve"
-                android:text="จองคิว" />
+                android:layout_gravity="center"
+                android:text="จองคิว"
+                android:textSize="@dimen/text_size_30"
+                style="@style/reserve_button"/>
 
         </LinearLayout>
 
