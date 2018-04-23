@@ -39,6 +39,7 @@ public class Main2Activity extends AppCompatActivity {
     TextView num_queqe;
     String num_text;
     String temp; // รับ location
+    String getUniqueId;
     TextView name_store;
 
     private FirebaseAuth firebaseAuth;
@@ -89,6 +90,7 @@ public class Main2Activity extends AppCompatActivity {
         num_queqe =(TextView)findViewById(R.id.num_queue);
         temp = getIntent().getExtras().getString("location");
         num_text =getIntent().getExtras().getString("myNumber");
+        getUniqueId =getIntent().getExtras().getString("uniqueId");
         num_queqe.setText(num_text);
         remain_q =(TextView)findViewById(R.id.remain_q);
         textView =(TextView)findViewById(R.id.textView);
@@ -290,10 +292,9 @@ public class Main2Activity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(temp+"");
-                DatabaseReference db_node_1 = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(temp+"").child("notification");
+                DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(getUniqueId+"");
                 db_node.removeValue();
-                db_node_1.removeValue();
+
                 startActivity(intent);
             }
         });
@@ -321,7 +322,7 @@ public class Main2Activity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(temp+"");
+                        DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(getUniqueId+"");
                         db_node.removeValue();
 
                         startActivity(intent);
@@ -357,6 +358,7 @@ public class Main2Activity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(),NotificationActivity.class);
             intent.putExtra("location", temp);
             intent.putExtra("myNumber", num_text);
+            intent.putExtra("uniqueId", getUniqueId); // String
             startActivity(intent);
         }
 

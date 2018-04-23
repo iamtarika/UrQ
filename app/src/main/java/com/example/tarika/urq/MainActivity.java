@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -69,8 +70,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     String [] arr_2;
     String [] arr_3;
     String [] arr_4;
+    String [] arr_5;
     List<ListSearchStore> list;
     ArrayAdapter<ListSearchStore> adapter;
+    String getUniqueId;
 
     String countAdd;
     String nameShop = ".";
@@ -105,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -124,31 +125,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         list = new ArrayList<ListSearchStore>();
 
 
-        list.clear();
+
         final Typeface tf_1=Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit.ttf");
         final Typeface tf_2 = Typeface.createFromAsset(getAssets(),"fonts/TEPC_CM-Prasanmit_Bol.ttf");
         tv_specify_q.setTypeface(tf_1);
         btn_fill_inform.setTypeface(tf_2);
-
-/*
-        ///////////////////////////////////////////////////////////////////////notification////////////////
-        String channelId = "defaultChannel";
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("มา แล้ว มา แล้ว")
-                .setContentText("8888888///8888888")
-                .setChannelId(channelId)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(1000, notificationBuilder.build());
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-*/
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -176,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     textEmail.setTypeface(tf_1);
 
 
-                    mRootRef.child("customer").child(user.getUid() + "").addValueEventListener(new ValueEventListener() {
+                    mRootRef.child("customer").child(user.getUid()+"").child("Add").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -191,96 +172,79 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 tv_specify_q.setVisibility(View.GONE);
                                 lv_show_added.setVisibility(View.VISIBLE);
 
-                                countAdd = String.valueOf(dataSnapshot.child("Add").getChildrenCount());
+                                countAdd = String.valueOf(dataSnapshot.getChildrenCount());
                                 arr_1 = new String[Integer.parseInt(countAdd)];
                                 arr_2 = new String[Integer.parseInt(countAdd)];
                                 arr_3 = new String[Integer.parseInt(countAdd)];
                                 arr_4 = new String[Integer.parseInt(countAdd)];
+                                arr_5 = new String[Integer.parseInt(countAdd)];
 
-                                int  m=0;
-                                for (DataSnapshot shopSnapshot : dataSnapshot.child("Add").getChildren()) {
+                                m=0;
+                                for (DataSnapshot shopSnapshot : dataSnapshot.getChildren()) {
 
                                     nameShop = String.valueOf(shopSnapshot.child("nameShop").getValue());
-                                    noShop = String.valueOf(shopSnapshot.getKey());
+                                    noShop = String.valueOf(shopSnapshot.child("noShop").getValue());
                                     noQ = String.valueOf(shopSnapshot.child("noQ").getValue());
                                     arr_1[m] = new String(nameShop);
                                     arr_2[m] = new String(noShop); // Uid
                                     arr_3[m] = new String(noQ);
 
-
-
+                                    getUniqueId = String.valueOf(shopSnapshot.child("noCodeId").getValue());
+                                    arr_5[m] = new String(getUniqueId);
 
                                     mRootRef.child("user").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                for (int i = 0 ;i<Integer.parseInt(countAdd);i++){
+                                            String counter = String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").child(noQ+"").child("status").getValue());
+                                            if (counter.equals("doing")){
+                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId+"").child("qWait");
+                                                qWaitShopRef.setValue("0");
 
-                                                    for (DataSnapshot _shopSnapshot: dataSnapshot.getChildren()) {
-                                                        String nameAllUser = String.valueOf(_shopSnapshot.child("shopData").child("nameShop").getValue());
+                                            }else if(counter.equals("finish")){
+                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId+"").child("qWait");
+                                                qWaitShopRef.setValue("0");
 
-                                                        if (arr_1[i].equals(nameAllUser)){
+                                            }else if(counter.equals("q")){
+                                                int k =1;
+                                                countStatus = String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").child(k + "").child("status").getValue());
+                                                int counterQnumber =Integer.valueOf(String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").getChildrenCount()));
+                                                countFinish=0;
+                                                countDoing=0;
+                                                countQ=0;
 
-                                                            int k=1;
+                                                for (i=1 ; i<=counterQnumber;i++){
+                                                    countStatus = String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").child(i + "").child("status").getValue());
+                                                    if (countStatus.equals("finish")) {
+                                                        countFinish++;
 
-                                                            while (countStatus!="null") {
+                                                    } else if (countStatus.equals("doing")) {
+                                                        countDoing++;
 
-                                                                countStatus = String.valueOf(_shopSnapshot.child("qNumber").child(k + "").child("status").getValue());
-
-                                                                if (countStatus.equals("finish")) {
-                                                                    countFinish++;
-
-                                                                } else if (countStatus.equals("doing")) {
-                                                                    countDoing++;
-
-                                                                } else if (countStatus.equals("q")) {
-                                                                    countQ++;
-
-                                                                }
-
-                                                                k++;
-
-                                                            }
-
-                                                            countFinishAndDoing = countFinish+countDoing;
-
-                                                            String statusAllUser = String.valueOf(_shopSnapshot.child("qNumber").child(arr_3[i]+"").child("status").getValue());
-                                                            if (statusAllUser.equals("finish")){
-                                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(arr_2[i]+"").child("qWait");
-                                                                qWaitShopRef.setValue("0");
-                                                            }else if(statusAllUser.equals("doing")){
-                                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(arr_2[i]+"").child("qWait");
-                                                                qWaitShopRef.setValue("0");
-                                                            }else if(statusAllUser.equals("q")){
-                                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(arr_2[i]+"").child("qWait");
-                                                                qWaitShopRef.setValue(Integer.parseInt(arr_3[i])-countFinishAndDoing);
-                                                            }
-
-
-
-                                                            countStatus = ".";
-                                                            countFinish = 0;
-                                                            countDoing = 0 ;
-                                                            countQ = 0 ;
-
-
-
-                                                        }
-
-
-
+                                                    } else if (countStatus.equals("q")) {
+                                                        countQ++;
 
                                                     }
-
                                                 }
 
+                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId+"").child("qWait");
+                                                qWaitShopRef.setValue(Integer.parseInt(noQ)-countDoing-countFinish);
+
+
                                             }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
+                                        }
+
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+
+
 
                                     qWait = String.valueOf(shopSnapshot.child("qWait").getValue());
                                     arr_4 [m] = new String(qWait+"");
@@ -306,7 +270,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     Intent intent = new Intent(MainActivity.this, Main2Activity.class);
                                     intent.putExtra("location", arr_2[position]); // String
                                     intent.putExtra("myNumber", arr_3[position]); // String
-                                    //test2.setText(arr_2[position]+"----"+arr_3[position]);
+                                    intent.putExtra("uniqueId", arr_5[position]); // String
+
                                     startActivity(intent);
 
                                 }
@@ -320,45 +285,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     });
 
-/*การแจ้งเตือน
-                        mRootRef.child("customer").child(user.getUid() + "").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot shopSnapshot : dataSnapshot.child("Add").getChildren()) {
-
-                                    String soundCheck = String.valueOf(shopSnapshot.child("notification").child("sound").getValue());
-                                    String alarmCheck = String.valueOf(shopSnapshot.child("notification").child("alarm").getValue());
-
-                                    if (soundCheck.equals("0")){
-                                        //ปิดเสียง
-                                        if(alarmCheck.equals("0")){
-                                            //ปิดการแจ้งเตือน
-
-                                        }else if(alarmCheck.equals("1")){
-                                            //เปิดการแจ้งเตือน
-                                        }
-
-
-
-
-                                    }else if (soundCheck.equals("1")){
-                                        //เปิดเสียง
-
-
-                                    }
-
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-*/
 
                 }else {
                     GoLogInScrean();
@@ -368,12 +294,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
 
-            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 int id = item.getItemId();
-                //noinspection SimplifiableIfStatement
+
                 if (id == R.id.nav_camera) {
                     Intent intent = new Intent(getApplicationContext(), SearchStoreActivity.class);
                     startActivity(intent);
@@ -429,6 +357,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult", "requestCode = " + requestCode);
+
+    }
+
+
+
 
     public void clickButtonEnter (View v){
         if(v == btn_fill_inform ){

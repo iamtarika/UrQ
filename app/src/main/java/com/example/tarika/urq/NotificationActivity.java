@@ -52,6 +52,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     String location;
     String num_text;
+    String getUniqueId;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -104,6 +105,7 @@ public class NotificationActivity extends AppCompatActivity {
 
         location = getIntent().getExtras().getString("location");
         num_text = getIntent().getExtras().getString("myNumber");
+        getUniqueId =getIntent().getExtras().getString("uniqueId");
 
         //btn_notification_save = (Button) findViewById(R.id.btn_notification_save);
 
@@ -114,18 +116,18 @@ public class NotificationActivity extends AppCompatActivity {
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String qType = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("qType").getValue());
+                        child(getUniqueId + "").child("qType").getValue());
 
                 String notificationSound = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("notification").child("sound").getValue());
+                        child(getUniqueId + "").child("notification").child("sound").getValue());
                 String notificationAlarm = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("notification").child("alarm").getValue());
+                        child(getUniqueId + "").child("notification").child("alarm").getValue());
                 String notificationType = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("notification").child("type").getValue());
+                        child(getUniqueId + "").child("notification").child("type").getValue());
                 String notificationDetailType = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("notification").child("detailType").getValue());
+                        child(getUniqueId + "").child("notification").child("detailType").getValue());
                 String notificationDetailType2 = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
-                        child(location + "").child("notification").child("detailType2").getValue());
+                        child(getUniqueId + "").child("notification").child("detailType2").getValue());
 
                 ed_add_num.setText(notificationDetailType + "");
 
@@ -336,14 +338,14 @@ public class NotificationActivity extends AppCompatActivity {
                 if (sw_alarm.isChecked()) {
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("sound");
                     mCodeNotificationSound.setValue("1");
 
                 } else {
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("sound");
                     mCodeNotificationSound.setValue("0");
 
@@ -373,7 +375,7 @@ public class NotificationActivity extends AppCompatActivity {
                     sp_3.setEnabled(true);
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("alarm");
                     mCodeNotificationSound.setValue("1");
 
@@ -396,7 +398,7 @@ public class NotificationActivity extends AppCompatActivity {
                     sp_2.setEnabled(false);
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("alarm");
                     mCodeNotificationSound.setValue("0");
 
@@ -411,7 +413,7 @@ public class NotificationActivity extends AppCompatActivity {
                                          public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                                              FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                             DatabaseReference mCodeNotificationType = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                                             DatabaseReference mCodeNotificationType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                                                      .child("notification").child("type");
 
                                              switch (i) {
@@ -464,7 +466,7 @@ public class NotificationActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         DatabaseReference mCodeNotificationBtnSound = mRootRef.child("customer").child(user.getUid())
-                                .child("Add").child(location + "").child("notification").child("detailType");
+                                .child("Add").child(getUniqueId + "").child("notification").child("detailType");
                         mCodeNotificationBtnSound.setValue(ed_add_num.getText().toString() + "");
                     }
                     @Override
@@ -482,7 +484,7 @@ public class NotificationActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                DatabaseReference mCodeNotificationDetailType2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                DatabaseReference mCodeNotificationDetailType2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                         .child("notification").child("detailType2");
                 switch (i) {
                     case 0:
@@ -516,7 +518,7 @@ public class NotificationActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                DatabaseReference mCodeNotificationType = mRootRef.child("customer").child(user.getUid()).child("Add").child(location + "")
+                DatabaseReference mCodeNotificationType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                         .child("notification").child("type");
 
                 switch (i) {

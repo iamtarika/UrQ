@@ -126,8 +126,6 @@ public class SearchStoreActivity extends AppCompatActivity {
     }
 
 
-
-
     class ListSearchStore_adapter extends ArrayAdapter<ListSearchStore>{
         ListSearchStore_adapter(){
             super(SearchStoreActivity.this,R.layout.item_listview_1,list);

@@ -92,6 +92,8 @@ public class ReservationActivity extends AppCompatActivity {
     TextView tv_rv_1;
     TextView tv_rv_2;
 
+    private boolean checkNameUser = false;
+
     //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,10 +201,54 @@ public class ReservationActivity extends AppCompatActivity {
                             et_reserve_no_customer.setEnabled(false);
                             tv_rv_2.setTextColor(Color.parseColor("#cac8ca"));
                             btn_reserve.setEnabled(false);
-                           btn_reserve.setBackgroundColor(R.color.black_grey);
+                            btn_reserve.setBackgroundColor(R.color.black_grey);
                         }
-                    }
 
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        mRootRef.child("customer").child(user.getUid()+"").child("Add").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
+
+                                    String shopName = String.valueOf(shopSnapshot.child("nameShop").getValue());
+                                    String nameUser = String.valueOf(shopSnapshot.child("nameUser").getValue());
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    if (shopName.equals(getName)&&nameUser.equals(user.getDisplayName()+"")){
+                                      //  checkNameUser=false;
+                                        tv_rv_1.setTextColor(Color.parseColor("#cac8ca"));
+                                        et_reserve_no_customer.setEnabled(false);
+                                        tv_rv_2.setTextColor(Color.parseColor("#cac8ca"));
+                                        btn_reserve.setEnabled(false);
+                                        btn_reserve.setBackgroundColor(R.color.black_grey);
+                                    }else {
+                                        tv_rv_1.setVisibility(View.VISIBLE);
+                                        et_reserve_no_customer.setVisibility(View.VISIBLE);
+                                        tv_rv_2.setVisibility(View.VISIBLE);
+                                        btn_reserve.setVisibility(View.VISIBLE);
+
+                                    }
+
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+
+                            }
+                        });
+
+
+
+
+
+
+
+
+                    }
 
 
 
@@ -216,6 +262,8 @@ public class ReservationActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         et_reserve_no_customer.addTextChangedListener(new TextWatcher() {
             @Override
@@ -246,6 +294,7 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     public void onClickReserve (View view){
+        final String codeId = mRootRef.push().getKey().toString();
 
         if (checkNo){
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ReservationActivity.this);
@@ -276,6 +325,7 @@ public class ReservationActivity extends AppCompatActivity {
             mBuilder.setView(mView);
             final AlertDialog dialog = mBuilder.create();
             dialog.show();
+
             mRootRef.child("user").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -295,12 +345,14 @@ public class ReservationActivity extends AppCompatActivity {
             });
             final Random rand = new Random();
             noRandomPin = rand.nextInt(9999-1000) + 1000;
-            btn_reserve_dialog_ok.setOnClickListener(
-                    new View.OnClickListener() {
+
+
+            btn_reserve_dialog_ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
                     DatabaseReference nameCustomer = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("nameCustomer");
                     nameCustomer.setValue(user.getDisplayName());
@@ -326,52 +378,38 @@ public class ReservationActivity extends AppCompatActivity {
                     }else {
                         status.setValue("q");
                     }
-                    DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("qType");
+
+                    DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qType");
                     mCodeQType.setValue(getQType+"");
-        //getTimeCurrent
-                    int mod_60 = avgServiceTime % 60 ;
-                    int divide_60 = (avgServiceTime - mod_60) / 60;
-                    DateFormat hr = new SimpleDateFormat("HH");
-                    DateFormat mi = new SimpleDateFormat("mm");
-                    int hr_1 = Integer.parseInt(hr.format(Calendar.getInstance().getTime()));
-                    int mi_1 = Integer.parseInt(mi.format(Calendar.getInstance().getTime()));
-
-                    DatabaseReference timeIn = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("time").child("timeIn");
-                    timeIn.setValue(hr_1+":"+mi_1);
-
-                    int mi_2 = mi_1+mod_60;
-                    if (mi_2>=60){
-                        hr_1=hr_1+1;
-                        mi_2 = mi_2%60;
-                    }
-                    int hr_2 = hr_1+divide_60;
-                        hr_2 = hr_2%24;
-
-                    DatabaseReference timeOut = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("time").child("timeOut");
-                    timeOut.setValue(hr_2+":"+mi_2);
 
                     // ในส่วนของ customer
-                    DatabaseReference nameShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("nameShop");
-                    DatabaseReference noPin = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noPin");
-                    DatabaseReference noQ = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noQ");
-                    DatabaseReference noCustomerCus = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noCustomer");
-                    DatabaseReference noShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noShop");
+                    DatabaseReference nameShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameShop");
+                    DatabaseReference noPin = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noPin");
+                    DatabaseReference noQ = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noQ");
+                    DatabaseReference noCustomerCus = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCustomer");
+                    DatabaseReference noShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noShop");
+                    DatabaseReference qWait = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qWait");
+                    DatabaseReference nameUser = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameUser");
+                    DatabaseReference noCodeId = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCodeId");
 
                     nameShop.setValue(getNameFromUser+"");
                     noPin.setValue(noRandomPin+"");
                     noQ.setValue(Integer.parseInt(numQnumber)+1);
                     noCustomerCus.setValue(et_reserve_no_customer.getText().toString()+"");
                     noShop.setValue(getUid+"");
+                    qWait.setValue(countQ+"");
+                    nameUser.setValue(user.getDisplayName()+"");
+                    noCodeId.setValue(codeId+"");
 
-                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                    DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("sound");
-                    DatabaseReference mCodeAlarmSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                    DatabaseReference mCodeAlarmSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("alarm");
-                    DatabaseReference mCodeTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                    DatabaseReference mCodeTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("type");
-                    DatabaseReference mCodeDetailTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                    DatabaseReference mCodeDetailTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("detailType");
-                    DatabaseReference mCodeDetailTypeSound2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                    DatabaseReference mCodeDetailTypeSound2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("detailType2");
 
                     //for notification

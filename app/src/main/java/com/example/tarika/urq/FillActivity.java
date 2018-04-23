@@ -253,34 +253,40 @@ public class FillActivity extends AppCompatActivity {
                                         String getQType = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
 
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                        final String codeId = mRootRef.push().getKey().toString();
 
-                                        DatabaseReference mCodeShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"");
-                                        DatabaseReference mCodeShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noShop");
-                                        DatabaseReference mCodeNoRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noQ");
-                                        DatabaseReference mCodeNameRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("nameShop");
-                                        DatabaseReference mCodePinRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noPin");
-                                        DatabaseReference mCodeNoCustomerRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("noCustomer");
-                                        DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"").child("qType");
+                                        DatabaseReference mCodeCodeId = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCodeId");
+                                        DatabaseReference mCodeShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noShop");
+                                        DatabaseReference mCodeNoRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noQ");
+                                        DatabaseReference mCodeNameRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameShop");
+                                        DatabaseReference mCodePinRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noPin");
+                                        DatabaseReference mCodeNoCustomerRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCustomer");
+                                        DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qType");
+                                        DatabaseReference mCodeNameUser = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameUser");
 
-                                        DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                                        DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                                                 .child("notification").child("sound");
-                                        DatabaseReference mCodeAlarmSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                                        DatabaseReference mCodeAlarmSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                                                 .child("notification").child("alarm");
-                                        DatabaseReference mCodeTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                                        DatabaseReference mCodeTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                                                 .child("notification").child("type");
-                                        DatabaseReference mCodeDetailTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                                        DatabaseReference mCodeDetailTypeSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                                                 .child("notification").child("detailType");
-                                        DatabaseReference mCodeDetailTypeSound2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUid+"")
+                                        DatabaseReference mCodeDetailTypeSound2 = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                                                 .child("notification").child("detailType2");
 
 
                                         //main detail for Main2Activity
+                                        mCodeCodeId.setValue(codeId+"");
                                         mCodeShopRef.setValue(getUid+"");
                                         mCodeNoRef.setValue(et_num_q.getText().toString()+"");
                                         mCodeNameRef.setValue(shopName);
                                         mCodePinRef.setValue(et_pin.getText().toString()+"");
                                         mCodeNoCustomerRef.setValue(noCustomer+"");
                                         mCodeQType.setValue(getQType+"");
+                                        mCodeNameUser.setValue(user.getDisplayName()+"");
+
+
 
                                         //for notification
                                         mCodeNotificationSound.setValue("1");
