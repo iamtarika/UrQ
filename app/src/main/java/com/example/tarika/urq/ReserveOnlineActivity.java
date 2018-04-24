@@ -79,7 +79,7 @@ public class ReserveOnlineActivity extends AppCompatActivity {
 
                 for (DataSnapshot shopSnapshot: dataSnapshot.getChildren()) {
 
-                    String statusReserve = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
+                    String statusReserve = String.valueOf(shopSnapshot.child("shopData").child("reserve").child("reserveStatus").getValue());
                     if (statusReserve.equals("1")){
                         String shopName = String.valueOf(shopSnapshot.child("shopData").child("nameShop").getValue());
 

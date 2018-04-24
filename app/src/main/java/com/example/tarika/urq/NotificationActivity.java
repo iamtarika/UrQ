@@ -137,7 +137,7 @@ public class NotificationActivity extends AppCompatActivity {
                     sw_alarm.setChecked(false);
                 }
 
-                if (qType.equals("0")) {
+                if (qType.equals("1")) {
                     //ร้านน้ำ
                     sp.setVisibility(View.GONE);
 
@@ -198,7 +198,7 @@ public class NotificationActivity extends AppCompatActivity {
                     }
 
 
-                } else if (qType.equals("1")) {
+                } else if (qType.equals("0")) {
                     //หมูกระทะ
 
                     if (notificationType.equals("0")) {
@@ -261,19 +261,19 @@ public class NotificationActivity extends AppCompatActivity {
 
                     }
 
-                    if (notificationDetailType2.equals("0")) {
+                    if (notificationDetailType2.equals("5")) {
                         // "5 นาที"
                         String myString = "5 นาที"; //the value you want the position for
                         ArrayAdapter myAdap = (ArrayAdapter) sp_2.getAdapter(); //cast to an ArrayAdapter
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp_2.setSelection(spinnerPosition);
-                    } else if (notificationDetailType2.equals("1")) {
+                    } else if (notificationDetailType2.equals("10")) {
                         // "10 นาที"
                         String myString = "10 นาที"; //the value you want the position for
                         ArrayAdapter myAdap = (ArrayAdapter) sp_2.getAdapter(); //cast to an ArrayAdapter
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp_2.setSelection(spinnerPosition);
-                    } else if (notificationDetailType2.equals("2")) {
+                    } else if (notificationDetailType2.equals("20")) {
                         // "20 นาที",
                         String myString = "20 นาที"; //the value you want the position for
                         ArrayAdapter myAdap = (ArrayAdapter) sp_2.getAdapter(); //cast to an ArrayAdapter
@@ -285,7 +285,7 @@ public class NotificationActivity extends AppCompatActivity {
                         ArrayAdapter myAdap = (ArrayAdapter) sp_2.getAdapter(); //cast to an ArrayAdapter
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp_2.setSelection(spinnerPosition);
-                    } else if (notificationDetailType2.equals("4")) {
+                    } else if (notificationDetailType2.equals("60")) {
                         // "60 นาที"
                         String myString = "60 นาที"; //the value you want the position for
                         ArrayAdapter myAdap = (ArrayAdapter) sp_2.getAdapter(); //cast to an ArrayAdapter
@@ -446,6 +446,11 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                if (ed_add_num.getText().toString().equals("0") && (i2 >= 1)) {
+                    Toast.makeText(getApplicationContext(), "ไม่ควรจะเป็น0", Toast.LENGTH_SHORT).show();
+                    ed_add_num.setText("1");
+                }
+
             }
 
             @Override
@@ -453,7 +458,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                 if (ed_add_num.getText().toString().equals("0") && (i2 >= 1)) {
                     Toast.makeText(getApplicationContext(), "ไม่ควรจะเป็น0", Toast.LENGTH_SHORT).show();
-                    ed_add_num.setText("");
+                    ed_add_num.setText("1");
                 }
 
             }
@@ -461,19 +466,30 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        DatabaseReference mCodeNotificationBtnSound = mRootRef.child("customer").child(user.getUid())
-                                .child("Add").child(getUniqueId + "").child("notification").child("detailType");
-                        mCodeNotificationBtnSound.setValue(ed_add_num.getText().toString() + "");
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                if (ed_add_num.getText().toString().equals("")||ed_add_num.getText().toString().equals("0")  )
 
-                    }
-                });
+                {
+
+                }else {
+
+                    mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            DatabaseReference mCodeNotificationBtnSound = mRootRef.child("customer").child(user.getUid())
+                                    .child("Add").child(getUniqueId + "").child("notification").child("detailType");
+                            mCodeNotificationBtnSound.setValue(ed_add_num.getText().toString() + "");
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+
+
 
 
             }
@@ -488,19 +504,19 @@ public class NotificationActivity extends AppCompatActivity {
                         .child("notification").child("detailType2");
                 switch (i) {
                     case 0:
-                        mCodeNotificationDetailType2.setValue("0");
+                        mCodeNotificationDetailType2.setValue("5");
                         break;
                     case 1:
-                        mCodeNotificationDetailType2.setValue("1");
+                        mCodeNotificationDetailType2.setValue("10");
                         break;
                     case 2:
-                        mCodeNotificationDetailType2.setValue("2");
+                        mCodeNotificationDetailType2.setValue("20");
                         break;
                     case 3:
-                        mCodeNotificationDetailType2.setValue("3");
+                        mCodeNotificationDetailType2.setValue("30");
                         break;
                     case 4:
-                        mCodeNotificationDetailType2.setValue("4");
+                        mCodeNotificationDetailType2.setValue("60");
                         break;
                 }
 

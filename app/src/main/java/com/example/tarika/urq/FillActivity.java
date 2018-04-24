@@ -52,7 +52,7 @@ public class FillActivity extends AppCompatActivity {
     private String text;
     private boolean delete = false;
     private static final int CODE_SIZE=4;
-
+    String codeId;
 
 
 
@@ -65,6 +65,7 @@ public class FillActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        codeId = mRootRef.push().getKey().toString();
 
         btn_fill_save =(Button)findViewById(R.id.btn_fill_save);
         et_num_q =(EditText)findViewById(R.id.et_num_q);
@@ -253,7 +254,6 @@ public class FillActivity extends AppCompatActivity {
                                         String getQType = String.valueOf(shopSnapshot.child("shopData").child("qType").getValue());
 
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                        final String codeId = mRootRef.push().getKey().toString();
 
                                         DatabaseReference mCodeCodeId = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCodeId");
                                         DatabaseReference mCodeShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noShop");
@@ -293,7 +293,7 @@ public class FillActivity extends AppCompatActivity {
                                         mCodeAlarmSound.setValue("1");
                                         mCodeTypeSound.setValue("0");
                                         mCodeDetailTypeSound.setValue("1");
-                                        mCodeDetailTypeSound2.setValue("1");
+                                        mCodeDetailTypeSound2.setValue("5");
 
 
                                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);

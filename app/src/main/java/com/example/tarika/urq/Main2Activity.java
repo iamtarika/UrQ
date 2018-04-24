@@ -166,9 +166,9 @@ public class Main2Activity extends AppCompatActivity {
                         k++;
                     }
                 }
-                countFinishAndDoing = countFinish+countDoing; //
+                countFinishAndDoing = countFinish+countDoing;
 
-                // num_queqe.setText(countQ+"");
+
                 if (num_text.equals(String.valueOf(countFinishAndDoing))) {
                     textServiced.setVisibility(View.GONE); //หมายเลขนี้ได้รับการบริการไปแล้ว
 
@@ -240,7 +240,7 @@ public class Main2Activity extends AppCompatActivity {
                     remain_q.setText(Integer.parseInt(num_text)-(countFinish+countDoing)+"");
 
 
-                    if (qType.equals("0")){
+                    if (qType.equals("1")){
                         // ไม่คำนวณเวลา
                         textShow3.setVisibility(View.GONE);     // ต้องรอประมาณ
                         waiting_time.setVisibility(View.GONE);  // เลข
@@ -276,16 +276,7 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-   /*     edit_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),Edit.class);
-                intent.putExtra("location", temp);
-                intent.putExtra("myNumber", num_text);
-                startActivity(intent);
-            }
-        });
-    */
+
         delete_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -319,13 +310,14 @@ public class Main2Activity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         dialog.cancel();
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                      //  Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         DatabaseReference db_node = mRootRef.child("customer").child(user.getUid()+"").child("Add").child(getUniqueId+"");
                         db_node.removeValue();
 
-                        startActivity(intent);
+                      //  startActivity(intent);
+                        finish();
                     }
                 });
                 btn_dialog_cancel.setOnClickListener(new View.OnClickListener(){

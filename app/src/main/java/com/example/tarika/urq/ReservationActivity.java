@@ -93,6 +93,7 @@ public class ReservationActivity extends AppCompatActivity {
     TextView tv_rv_2;
 
     private boolean checkNameUser = false;
+    String codeId;
 
     //@SuppressLint("WrongViewCast")
     @Override
@@ -103,7 +104,7 @@ public class ReservationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        codeId = mRootRef.push().getKey().toString();
         name_reserve_store = (TextView)findViewById(R.id.name_reserve_store);
         text_reserve_time_open_close = (TextView)findViewById(R.id.text_reserve_time_open_close);
 
@@ -294,7 +295,7 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     public void onClickReserve (View view){
-        final String codeId = mRootRef.push().getKey().toString();
+
 
         if (checkNo){
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ReservationActivity.this);
@@ -373,14 +374,10 @@ public class ReservationActivity extends AppCompatActivity {
                     id.setValue(temp+"");
 
                     DatabaseReference status = mRootRef.child("user").child(getUid+"").child("qNumber").child(temp+"").child("status");
-                    if (countDoing<Integer.parseInt(getTable)){
-                        status.setValue("doing");
-                    }else {
-                        status.setValue("q");
-                    }
+                    status.setValue("q");
 
-                    DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qType");
-                    mCodeQType.setValue(getQType+"");
+
+
 
                     // ในส่วนของ customer
                     DatabaseReference nameShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameShop");
@@ -388,18 +385,22 @@ public class ReservationActivity extends AppCompatActivity {
                     DatabaseReference noQ = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noQ");
                     DatabaseReference noCustomerCus = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCustomer");
                     DatabaseReference noShop = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noShop");
-                    DatabaseReference qWait = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qWait");
+                    //DatabaseReference qWait = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qWait");
                     DatabaseReference nameUser = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("nameUser");
                     DatabaseReference noCodeId = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("noCodeId");
+                    DatabaseReference mCodeQType = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"").child("qType");
+
+
 
                     nameShop.setValue(getNameFromUser+"");
                     noPin.setValue(noRandomPin+"");
                     noQ.setValue(Integer.parseInt(numQnumber)+1);
                     noCustomerCus.setValue(et_reserve_no_customer.getText().toString()+"");
                     noShop.setValue(getUid+"");
-                    qWait.setValue(countQ+"");
+                    //qWait.setValue(countQ+"");
                     nameUser.setValue(user.getDisplayName()+"");
                     noCodeId.setValue(codeId+"");
+                    mCodeQType.setValue(getQType+"");
 
                     DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(codeId+"")
                             .child("notification").child("sound");
@@ -417,12 +418,13 @@ public class ReservationActivity extends AppCompatActivity {
                     mCodeAlarmSound.setValue("1");
                     mCodeTypeSound.setValue("0");
                     mCodeDetailTypeSound.setValue("1");
-                    mCodeDetailTypeSound2.setValue("1");
+                    mCodeDetailTypeSound2.setValue("5");
 
                     dialog.cancel();
 
-                    Intent intent = new Intent(ReservationActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    finish();
+                   // Intent intent = new Intent(ReservationActivity.this, MainActivity.class);
+                   // startActivity(intent);
 
                 }
             });
