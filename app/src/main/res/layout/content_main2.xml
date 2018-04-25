@@ -185,8 +185,8 @@
                 android:id="@+id/waiting_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="xxx"
-                android:textSize="@dimen/text_size_40"
+                android:text="22"
+                android:textSize="@dimen/text_size_30"
                 android:textColor="@color/waiting_time" />
 
             <TextView

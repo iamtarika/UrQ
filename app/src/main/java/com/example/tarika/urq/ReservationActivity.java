@@ -417,14 +417,14 @@ public class ReservationActivity extends AppCompatActivity {
                     mCodeNotificationSound.setValue("1");
                     mCodeAlarmSound.setValue("1");
                     mCodeTypeSound.setValue("0");
-                    mCodeDetailTypeSound.setValue("1");
+                    mCodeDetailTypeSound.setValue("22");
                     mCodeDetailTypeSound2.setValue("5");
 
                     dialog.cancel();
 
                     finish();
-                   // Intent intent = new Intent(ReservationActivity.this, MainActivity.class);
-                   // startActivity(intent);
+                 //   Intent intent = new Intent(ReservationActivity.this, MainActivity.class);
+                 //   startActivity(intent);
 
                 }
             });

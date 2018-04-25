@@ -46,7 +46,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
@@ -66,14 +72,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     int a;
     String checkListAdded;
     ListView lv_show_added;
+
+    List<ListSearchStore> list;
+    ArrayAdapter<ListSearchStore> adapter;
+    String getUniqueId;
+
     String [] arr_1;
     String [] arr_2;
     String [] arr_3;
     String [] arr_4;
     String [] arr_5;
-    List<ListSearchStore> list;
-    ArrayAdapter<ListSearchStore> adapter;
-    String getUniqueId;
 
     String countAdd;
     String nameShop = ".";
@@ -100,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Button btn_main_dialog_cancel;
 
     TextView tv_dialog;
+    String timeOut=".";
+    int hr;
+    int mi;
 
 TextView ttt;
 
@@ -142,7 +153,7 @@ TextView ttt;
         firebaseAuth =FirebaseAuth.getInstance();
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
                     list.clear();
@@ -169,11 +180,13 @@ TextView ttt;
                                 if (Integer.parseInt(checkListAdded) == 0) {
                                     tv_specify_q.setVisibility(View.VISIBLE);
                                     lv_show_added.setVisibility(View.GONE);
+
+
                                 } else {
                                     tv_specify_q.setVisibility(View.GONE);
                                     lv_show_added.setVisibility(View.VISIBLE);
                                     list.clear();
-                                    countAdd = String.valueOf(dataSnapshot.getChildrenCount());
+                                    checkListAdded = String.valueOf(dataSnapshot.getChildrenCount());
 
                                     arr_1 = new String[Integer.parseInt(countAdd)];
                                     arr_2 = new String[Integer.parseInt(countAdd)];
@@ -194,47 +207,137 @@ TextView ttt;
                                         arr_5[m] = new String(getUniqueId);
 
        /////////////////////////////////////////////การแจ้งเตือน
-                                        String qType = String.valueOf(shopSnapshot.child("qType").getValue()); // เช็คว่าคำนวณเวลามั้ย? 0คำนวณ 1 ไม่คำนวณ
+                                        final String qType = String.valueOf(shopSnapshot.child("qType").getValue()); // เช็คว่าคำนวณเวลามั้ย? 0คำนวณ 1 ไม่คำนวณ
                                         String sound = String.valueOf(shopSnapshot.child("notification").child("sound").getValue());
                                         final String alarm = String.valueOf(shopSnapshot.child("notification").child("alarm").getValue());
                                         final String type = String.valueOf(shopSnapshot.child("notification").child("type").getValue()); //0,1/2
                                         final String detailType = String.valueOf(shopSnapshot.child("notification").child("detailType").getValue()); // จำนวณที่ให้แจ้งก่อนกี่คิว
-                                        String detailType2 = String.valueOf(shopSnapshot.child("notification").child("detailType2").getValue()); // นาทีที่เก็บ
+                                        final String detailType2 = String.valueOf(shopSnapshot.child("notification").child("detailType2").getValue()); // นาทีที่เก็บ
+
 
 
                                             mRootRef.child("user").addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                    String counter = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("status").getValue());
-                                                    String repeat = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("repeat").getValue());
+                                                    String counter   = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("status").getValue());
+                                                    String repeat    = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("repeat").getValue());
 
-                                                    String numServer = String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("numServer").getValue());
-                                                    String callNow = String.valueOf(dataSnapshot.child(noShop + "").child("callNow").getValue());
+                                                    int numServer = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("numServer").getValue()));
+                                                    int avgServiceTime = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("avgServiceTime").getValue()));
 
+
+
+                                                    if (qType.equals("0")) {
+                                                        int n = 1;
+                                                        counterQnumber = Integer.valueOf(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").getChildrenCount())); // จำนวน node ที่อยู่ข้างใน
+
+                                                        for (int i=1 ;i<=counterQnumber;i++){
+                                                            timeOut = String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").child(n + "").child("time").child("timeOut").getValue());
+                                                            countStatus = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(n + "").child("status").getValue());
+
+                                                            if (countStatus.equals("finish")){
+                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                timeWaitShopRef .setValue("0");
+
+                                                            }else if (countStatus.equals("doing")){
+                                                                        if (!timeOut.equals("null")){
+
+                                                                            DateFormat timeNow = new SimpleDateFormat("HH:mm");
+                                                                            String getTimeNow = timeNow.format(Calendar.getInstance().getTime());
+                                                                            String[] timeOutSplit = timeOut.split(":"); /// ออก
+                                                                            String[] currentTimeSplit = getTimeNow.split(":"); // ปัจจุบัน
+
+                                                                            if(Integer.parseInt(currentTimeSplit[0])>Integer.parseInt(timeOutSplit[0])){
+
+                                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                                timeWaitShopRef.setValue("0");
+
+                                                                            }
+                                                                            else if((Integer.parseInt(timeOutSplit[0])==Integer.parseInt(currentTimeSplit[0]))&&
+                                                                                    (Integer.parseInt(timeOutSplit[1])>=Integer.parseInt(currentTimeSplit[1]))){
+
+                                                                                mi = Integer.parseInt(timeOutSplit[1])- Integer.parseInt(currentTimeSplit[1]);
+                                                                                hr = 0;
+
+                                                                            }else {
+
+                                                                                hr = Integer.parseInt(timeOutSplit[0])-1;
+                                                                                mi = Integer.parseInt(timeOutSplit[1])+ 60 - Integer.parseInt(currentTimeSplit[1]);
+                                                                                hr = hr - Integer.parseInt(currentTimeSplit[0]);
+                                                                               // hr = hr/(hr%12);
+                                                                                hr = hr*60;
+                                                                                int HrMi = hr+mi;
+
+                                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                                timeWaitShopRef.setValue(HrMi);
+                                                                            }
+
+                                                                        }else if(timeOut.equals("null")){
+                                                                            DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                            timeWaitShopRef.setValue(avgServiceTime+"");
+
+
+
+                                                                        }
+
+                                                            }else if (countStatus.equals("q")){
+
+
+                                                                    if(n<=numServer){
+                                                                        DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                        timeWaitShopRef.setValue("0");
+
+                                                                    }else {
+                                                                        String countStatus2 = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(n-numServer + "").child("status").getValue());
+
+                                                                        if(countStatus2.equals("doing")){
+
+                                                                            int timeBefore = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(n-numServer + "").child("time").child("timeWait").getValue()));
+                                                                            int newMyTime = timeBefore+avgServiceTime;
+                                                                            DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                            timeWaitShopRef.setValue(newMyTime+"");
+
+                                                                        }else if(countStatus2.equals("finish")){
+                                                                            int timeBefore = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(n-numServer + "").child("time").child("timeWait").getValue()));
+                                                                            int newMyTime = timeBefore+avgServiceTime;
+                                                                            DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                            timeWaitShopRef.setValue(newMyTime+"");
+
+                                                                        }else if(countStatus2.equals("q")){
+                                                                            int timeBefore = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(n-numServer + "").child("time").child("timeWait").getValue()));
+                                                                            int newMyTime = timeBefore+avgServiceTime;
+                                                                            DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(n+"").child("time").child("timeWait");
+                                                                            timeWaitShopRef.setValue(newMyTime+"");
+
+                                                                        }
+
+                                                                    }
+
+
+                                                            }
+
+
+                                                                    n++;
+                                                        }
+                                                    }
 
 
                                                     if (repeat.equals("1")){
                                                         noti(nameShop);
                                                         DatabaseReference repeatShopRef = mRootRef.child("user").child(noShop+"").child("qNumber").child(noQ+"").child("repeat");
                                                         repeatShopRef.setValue("0");
-
                                                     }
 
-                                                    if (counter.equals("doing")) {
+
+                                                    if (counter.equals("finish")) {
+                                                        DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
+                                                        qWaitShopRef.setValue("0");
+
+                                                    }else if (counter.equals("doing")) {
                                                         noti(nameShop);
                                                         DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
                                                         qWaitShopRef.setValue("0");
-                                                        DatabaseReference timeWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("timeWait");
-                                                        timeWaitShopRef.setValue("0");
-
-
-                                                    } else if (counter.equals("finish")) {
-                                                        DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
-                                                        qWaitShopRef.setValue("0");
-                                                        DatabaseReference timeWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("timeWait");
-                                                        timeWaitShopRef.setValue("0");
-
 
                                                     } else if (counter.equals("q")) {
                                                         int k = 1;
@@ -244,9 +347,10 @@ TextView ttt;
                                                         countDoing = 0;
                                                         countQ = 0;
 
-                                                        while (!countStatus.equals("null")) {
 
-                                                            countStatus = String.valueOf(dataSnapshot.child("qNumber").child(k + "").child("status").getValue());
+                                                        for (int i =1; i<=counterQnumber; i++){
+
+                                                            countStatus = String.valueOf(dataSnapshot.child("qNumber").child(i + "").child("status").getValue());
 
                                                             if (countStatus.equals("finish")) {
                                                                 countFinish++;
@@ -256,12 +360,11 @@ TextView ttt;
                                                                 countQ++;
                                                             }
 
-                                                            if (!countStatus.equals("null")) {
-                                                                k++;
-                                                            }
                                                         }
+
+
+
                                                         countFinishAndDoing = countFinish + countDoing;
-                                                        a=1;
 
                                                         DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
                                                         qWaitShopRef.setValue(Integer.parseInt(noQ) - countFinishAndDoing + "");
@@ -270,20 +373,30 @@ TextView ttt;
                                                     }
 
 
-
-                                                    if(type.equals("0")){
+                                           /*         if(type.equals("0")){
                                                         // ทุกคิว
+
                                                     }else if(type.equals("1")){
                                                         // ตามจำนวนที่กำหนด
-                                                        if (Integer.parseInt(detailType)<=Integer.parseInt(qWait)){
-                                                            noti(nameShop);
+                                                        if (Integer.parseInt(detailType)==Integer.parseInt(qWait)){
+                                                            notiNumber(nameShop,Integer.parseInt(qWait));
                                                         }
 
                                                     }else if(type.equals("2")){
-                                                        // ก่อนระยะเวลาที่กำหนด
+
+                                                        int getTime = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ+"").child("time").child("timeWait").getValue()));
+
+                                                        if (getTime<=Integer.parseInt(detailType2)){
+                                                            //5นาที
+                                                            notiTime(nameShop, getTime);
+
+                                                        }
 
 
                                                     }
+                                                    */
+
+
 
 
 
@@ -298,8 +411,14 @@ TextView ttt;
                                             });
 
 
-                                    qWait = String.valueOf(shopSnapshot.child("qWait").getValue());
-                                    arr_4 [m] = new String(qWait+"");
+
+
+
+
+
+                                        qWait = String.valueOf(shopSnapshot.child("qWait").getValue());
+                                        arr_4 [m] = new String(qWait+"");
+
 
 
                                     ListSearchStore l_search_store = new ListSearchStore(arr_1[m], arr_4[m]);
@@ -315,7 +434,7 @@ TextView ttt;
                             adapter = new ListSearchStore_adapter();
                             lv_show_added.setAdapter(adapter);
 
-                            lv_show_added.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                           lv_show_added.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -329,6 +448,7 @@ TextView ttt;
 
                                 }
                             });
+
 
 
 
@@ -416,11 +536,11 @@ TextView ttt;
 
     }
 
-    /*protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode,data);
         Log.d("onActivityResult", "requestCode = " + requestCode);
     }
-    */
+
 
 
 
@@ -543,24 +663,69 @@ TextView ttt;
     public void noti(String nameShop){
 
 
-            String channelId = "defaultChannel";
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        String channelId = "defaultChannel";
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                    .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("ร้าน "+ nameShop)
-                    .setContentText("ถึงคิวของคุณแล้ว")
-                    .setChannelId(channelId)
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("ร้าน "+ nameShop)
+                .setContentText("ถึงคิวของคุณแล้ว")
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.notify(1000, notificationBuilder.build());
-        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1000, notificationBuilder.build());
+    }
+
+
+    public void notiNumber(String nameShop, int num){
+
+
+        String channelId = "defaultChannel";
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("ร้าน "+ nameShop)
+                .setContentText("อีก " + num +" คิว ถึงคิวของคุณแล้ว")
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1000, notificationBuilder.build());
+    }
+
+    public void notiTime(String nameShop, int time){
+
+
+        String channelId = "defaultChannel";
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("ร้าน "+ nameShop)
+                .setContentText("อีกประมาณ " + time +"นาที ถึงคิวของคุณแล้ว")
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1000, notificationBuilder.build());
+    }
 
 
 }

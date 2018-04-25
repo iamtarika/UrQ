@@ -149,6 +149,7 @@ public class Main2Activity extends AppCompatActivity {
                 String pin = String.valueOf(dataSnapshot.child("qNumber").child(num_text).child("pin").getValue());
                 et_pin.setText(pin);
 
+
                 int k=1;
                 while (!countStatus.equals("null")){
 
@@ -248,6 +249,9 @@ public class Main2Activity extends AppCompatActivity {
 
                     }else{
                         //คำนวณเวลา
+                        String waitTime = String.valueOf(dataSnapshot.child("qNumber").child(num_text).child("time").child("timeWait").getValue());
+                        waiting_time.setText(waitTime);
+
                         textShow3.setVisibility(View.VISIBLE);     // ต้องรอประมาณ
                         waiting_time.setVisibility(View.VISIBLE);  // เลข
                         textShow4.setVisibility(View.VISIBLE);     // นาที
