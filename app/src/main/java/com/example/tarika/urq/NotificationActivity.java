@@ -585,8 +585,7 @@ public class NotificationActivity extends AppCompatActivity {
 
             if(id == android.R.id.home){
                 finish();
-                onBackPressed();
-                return true;
+
             }
         return super.onOptionsItemSelected(item);
 

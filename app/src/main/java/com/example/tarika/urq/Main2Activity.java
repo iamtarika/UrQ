@@ -56,6 +56,7 @@ public class Main2Activity extends AppCompatActivity {
     int countDoing = 0;
     int countQ =0;
     String countStatus = ".";
+    int counterQnumber =0;
 
     TextView nameStore;
     TextView textServiced;
@@ -150,22 +151,23 @@ public class Main2Activity extends AppCompatActivity {
                 et_pin.setText(pin);
 
 
-                int k=1;
-                while (!countStatus.equals("null")){
+                counterQnumber = Integer.parseInt(String.valueOf(dataSnapshot.child("qNumber").getChildrenCount()));
+                countFinish = 0;
+                countDoing = 0;
+                countQ = 0;
 
-                    countStatus = String.valueOf(dataSnapshot.child("qNumber").child(k+"").child("status").getValue());
+                for (int i =1; i<=counterQnumber; i++){
 
-                    if (countStatus.equals("finish")){
+                    countStatus = String.valueOf(dataSnapshot.child("qNumber").child(i + "").child("status").getValue());
+
+                    if (countStatus.equals("finish")) {
                         countFinish++;
-                    }else if(countStatus.equals("doing")){
+                    } else if (countStatus.equals("doing")) {
                         countDoing++;
-                    }else if(countStatus.equals("q")){
+                    } else if (countStatus.equals("q")) {
                         countQ++;
                     }
 
-                    if(!countStatus.equals("null")){
-                        k++;
-                    }
                 }
                 countFinishAndDoing = countFinish+countDoing;
 
@@ -238,7 +240,7 @@ public class Main2Activity extends AppCompatActivity {
                     decline_button.setVisibility(View.VISIBLE); // ลบ
                     delete_button.setVisibility(View.GONE); //ลบรายการแจ้งเตือนนี้
 
-                    remain_q.setText(Integer.parseInt(num_text)-(countFinish+countDoing)+"");
+                    remain_q.setText(Integer.parseInt(num_text)-(countFinishAndDoing)+"");
 
 
                     if (qType.equals("1")){
