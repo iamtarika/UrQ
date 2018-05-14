@@ -45,6 +45,11 @@
         <item name="android:textColor">@color/num_q</item>
     </style>
 
+    <style name="num_q2">
+        <item name="android:textSize">160dp</item>
+        <item name="android:textColor">@color/num_q</item>
+    </style>
+
     <style name="text_size_24">
         <item name="android:textSize">@dimen/text_size_24</item>
         <item name="android:textColor">@color/cancel_button</item>
@@ -161,7 +166,35 @@
         <item name="spinBars">false</item>
         <item name="color">@android:color/black</item>
     </style>
+    <style name="drawer">
+        <item name="android:textSize">19sp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
+    <style name="ThemeSpinner">
+        <!-- Color when pressed -->
+        <item name="colorAccent">#FFCA28</item>
 
 
+    </style>
+    <style name="ThemeSpinner2">
+        <!-- Color when pressed -->
+        <item name="colorAccent">#0ABDBC</item>
+
+    </style>
+
+    <style name="SCBSwitch" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">#0ABDBC</item>
+
+        <!-- inactive thumb color -->
+        <item name="colorSwitchThumbNormal">#f1f1f1
+        </item>
+
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">#42221f1f
+        </item>
+    </style>
 
 </resources>

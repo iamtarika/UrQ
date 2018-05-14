@@ -38,6 +38,7 @@
             android:layout_marginTop="20dp"
             android:text="xxx"
             android:textSize="@dimen/text_size_30"
+            android:textColor="@color/black_grey"
             />
 
     </LinearLayout>
@@ -60,7 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="XX20"
-            android:textSize="@dimen/text_size_30" />
+            android:textSize="@dimen/text_size_30"
+            android:textColor="@color/black_grey"/>
 
     </LinearLayout>
 
@@ -74,9 +76,9 @@
         <Button
             android:id="@+id/btn_reserve_dialog_ok"
             android:layout_width="100dp"
-            android:layout_height="55dp"
+            android:layout_height="60dp"
             android:onClick="ClickButtonLogout"
-            android:textSize="@dimen/text_size_30"
+            android:textSize="@dimen/text_size_35"
             android:text="จอง"
             android:backgroundTint="@color/ok_button"
             android:textColor="#FFFFFF"/>
@@ -85,10 +87,10 @@
         <Button
             android:id="@+id/btn_reserve_dialog_cancel"
             android:layout_width="100dp"
-            android:layout_height="55dp"
+            android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:onClick="ClickButtonCancel"
-            android:textSize="@dimen/text_size_30"
+            android:textSize="@dimen/text_size_35"
             android:text="ยกเลิก"
             android:backgroundTint="@color/cancel_button"
             android:textColor="#FFFFFF"/>

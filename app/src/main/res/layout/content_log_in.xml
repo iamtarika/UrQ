@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginBottom="60dp">
+        android:layout_marginBottom="70dp">
 
         <ImageView
             android:id="@+id/logo"
@@ -25,7 +25,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="60dp"
             android:layout_marginRight="60dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="130dp"
             android:src="@drawable/urq_logo_black" />
 
         <TextView

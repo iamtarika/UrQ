@@ -34,31 +34,26 @@ public class NotificationActivity extends AppCompatActivity {
     TextView tv_notification_setting;
 
     Spinner sp;
-    String format[] = {"ทุกคิว", "จำนวนที่กำหนด", "ก่อนระยะเวลาที่กำหนด"};
+    String format[] = {"ทุกคิว", "จำนวนที่กำหนด", "ก่อนระยะเวลาที่กำหนด"}; // เลือกรูปแบบในการตั้งค่าการแจ้งเตือนแบบมีการคำนวณเวลา
     ArrayAdapter<String> adapter;
 
     Spinner sp_2;
-    String format_2[] = {"5 นาที", "10 นาที" , "20 นาที", "30 นาที" ,"60 นาที"};
+    String format_2[] = {"5 นาที", "10 นาที" , "20 นาที", "30 นาที" ,"60 นาที"};    // เวลาที่ต้องการจะรอ
     ArrayAdapter<String> adapter_time;
 
     Spinner sp_3;
-    String format_3[] = {"ทุกคิว", "จำนวนที่กำหนด" };
+    String format_3[] = {"ทุกคิว", "จำนวนที่กำหนด" };   // รูปแบบการเลือกแบบไม่มีการคำนวนเวลา
     ArrayAdapter<String> adapter_3;
-
-
 
     EditText ed_add_num;
     TextView tv_detail_1 , tv_detail_2;
-
     String location;
     String num_text;
     String getUniqueId;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-
     boolean check = false;
-    //Button btn_notification_save ;
     String notificationTypeBtn;
 
 
@@ -102,22 +97,22 @@ public class NotificationActivity extends AppCompatActivity {
         tv_detail_2 = (TextView) findViewById(R.id.tv_detail_2);
         tv_detail_2.setVisibility(View.GONE);
 
-
+        //ค่าที่รับมา
         location = getIntent().getExtras().getString("location");
         num_text = getIntent().getExtras().getString("myNumber");
         getUniqueId =getIntent().getExtras().getString("uniqueId");
 
-        //btn_notification_save = (Button) findViewById(R.id.btn_notification_save);
 
-
+        //อ่านค่าในส่วนของ customer
         mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // ประกาศ user เพ่อจะนำค่า Uid มาใช้เพื่อระบุตัวต้น
+
+                //อ่านค่าต่างๆ ที่จำเป็นต้องนำมาแสดงผลหน้าของการแจ้งเตือน
                 String qType = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
                         child(getUniqueId + "").child("qType").getValue());
-
                 String notificationSound = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
                         child(getUniqueId + "").child("notification").child("sound").getValue());
                 String notificationAlarm = String.valueOf(dataSnapshot.child(user.getUid() + "").child("Add").
@@ -131,18 +126,17 @@ public class NotificationActivity extends AppCompatActivity {
 
                 ed_add_num.setText(notificationDetailType + "");
 
-                if (notificationSound.equals("1")) {
+                if (notificationSound.equals("1")) {    //ส่วนของเปิด-ปิดเสียงการแจ้งเตือน 1 เปิด 0 ปิด
                     sw_alarm.setChecked(true);
                 } else if (notificationSound.equals("0")) {
                     sw_alarm.setChecked(false);
                 }
 
-                if (qType.equals("1")) {
-                    //ร้านน้ำ
+                if (qType.equals("1")) {  //ในกรณีที่ร้านไม่มีการคำนวนเวลา
                     sp.setVisibility(View.GONE);
 
-                    if (notificationType.equals("0")) {
-                        //ทุกคิว
+                    if (notificationType.equals("0")) {     //แจ้งเตือนทุกคิว
+
                         tv_notification_setting.setEnabled(true);   // รูปแบบการแจ้งเตือน
                         sp_3.setEnabled(true);
                         sp_3.setVisibility(View.VISIBLE);
@@ -157,8 +151,8 @@ public class NotificationActivity extends AppCompatActivity {
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp_3.setSelection(spinnerPosition);
 
-                    } else if (notificationType.equals("1")) {
-                        //จำนวนที่กำหนด
+                    } else if (notificationType.equals("1")) {      //แจ้งเตือนก่อนจำนวนคิวที่ต้องการ
+
                         tv_notification_setting.setEnabled(true);   // รูปแบบการแจ้งเตือน
                         sp_3.setEnabled(true);
                         sp_3.setVisibility(View.VISIBLE);
@@ -172,10 +166,7 @@ public class NotificationActivity extends AppCompatActivity {
                         ArrayAdapter myAdap = (ArrayAdapter) sp_3.getAdapter(); //cast to an ArrayAdapter
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp_3.setSelection(spinnerPosition);
-
-
                     }
-
 
                     if (notificationAlarm.equals("1")) {
                         sw_notification.setChecked(true);
@@ -184,8 +175,6 @@ public class NotificationActivity extends AppCompatActivity {
                         tv_detail_1.setEnabled(true);
                         sp_3.setEnabled(true);
                         ed_add_num.setEnabled(true);
-
-
                     } else if (notificationAlarm.equals("0")) {
                         sw_notification.setChecked(false);
                         tv_notification_setting.setTextColor(Color.parseColor("#cac8ca"));
@@ -193,15 +182,13 @@ public class NotificationActivity extends AppCompatActivity {
                         tv_detail_2.setTextColor(Color.parseColor("#cac8ca"));
                         sp_3.setEnabled(false);
                         ed_add_num.setEnabled(false);
-
-
                     }
 
 
-                } else if (qType.equals("0")) {
+                } else if (qType.equals("0")) { //ในกรณีที่ร้านมีการคำนวนเวลา
                     //หมูกระทะ
 
-                    if (notificationType.equals("0")) {
+                    if (notificationType.equals("0")) {             //แจ้งเตือนทุกคิว
                         tv_notification_setting.setEnabled(true);   // รูปแบบการแจ้งเตือน
                         sp.setEnabled(true);                        // spinner เลือกรูปแบบ
 
@@ -220,7 +207,7 @@ public class NotificationActivity extends AppCompatActivity {
                         int spinnerPosition = myAdap.getPosition(myString);
                         sp.setSelection(spinnerPosition);
 
-                    } else if (notificationType.equals("1")) {
+                    } else if (notificationType.equals("1")) {      //แจ้งเตือนก่อนจำนวนคิวที่ต้องการ
                         tv_notification_setting.setEnabled(true);   // รูปแบบการแจ้งเตือน
                         sp.setEnabled(true);                        // spinner เลือกรูปแบบ
 
@@ -240,7 +227,7 @@ public class NotificationActivity extends AppCompatActivity {
                         sp.setSelection(spinnerPosition);
 
 
-                    } else if (notificationType.equals("2")) {
+                    } else if (notificationType.equals("2")) {      //แจ้งเตือนก่อนเวลาที่กำหนด
                         tv_notification_setting.setEnabled(true);   // รูปแบบการแจ้งเตือน
                         sp.setEnabled(true);                        // spinner เลือกรูปแบบ
 
@@ -261,6 +248,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                     }
 
+                    //ในส่วนของการกำหนดเวลาที่ต้องการให้แจ้งเตือนก่อนเวลา
                     if (notificationDetailType2.equals("5")) {
                         // "5 นาที"
                         String myString = "5 นาที"; //the value you want the position for
@@ -293,8 +281,8 @@ public class NotificationActivity extends AppCompatActivity {
                         sp_2.setSelection(spinnerPosition);
                     }
 
-
-                    if (notificationAlarm.equals("1")) {
+                    //ในส่วนของการเปิดปิดแจ้งเตือน
+                    if (notificationAlarm.equals("1")) {        //เปิดการแจ้งเตือน
                         sw_notification.setChecked(true);
                         tv_notification_setting.setTextColor(Color.parseColor("#000000"));
                         tv_detail_2.setTextColor(Color.parseColor("#000000"));
@@ -305,8 +293,7 @@ public class NotificationActivity extends AppCompatActivity {
                         tv_detail_2.setEnabled(true);
                         sp_2.setEnabled(true);
 
-
-                    } else if (notificationAlarm.equals("0")) {
+                    } else if (notificationAlarm.equals("0")) { //ปิดการแจ้งเตือน
                         sw_notification.setChecked(false);
                         tv_notification_setting.setTextColor(Color.parseColor("#cac8ca"));
                         tv_detail_2.setTextColor(Color.parseColor("#cac8ca"));
@@ -315,14 +302,8 @@ public class NotificationActivity extends AppCompatActivity {
                         ed_add_num.setEnabled(false);
                         tv_detail_2.setEnabled(false);
                         sp_2.setEnabled(false);
-
                     }
-
                 }
-
-                ////get data for ed_num and spinner time
-
-
             }
 
             @Override
@@ -331,34 +312,29 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
-
+        //เปิด-ปิดเสียงการแจ้งเตือน
         sw_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sw_alarm.isChecked()) {
-
+                if (sw_alarm.isChecked()) { //สวิสซ์เปิด
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("sound");
-                    mCodeNotificationSound.setValue("1");
-
-                } else {
-
+                    mCodeNotificationSound.setValue("1");   // เขียนค่า sound ใน database เป็น "1" == เปิดเสียง
+                } else {  //สวิสซ์ปิด
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("sound");
-                    mCodeNotificationSound.setValue("0");
-
+                    mCodeNotificationSound.setValue("0");   // เขียนค่า sound ใน database เป็น "0" == ปิดเสียง
                 }
             }
         });
 
-
+        //เปิด-ปิดการแจ้งเตือน
         sw_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sw_notification.isChecked()) {
-
+                if (sw_notification.isChecked()) { //สวิสซ์เปิด
                     sp.setEnabled(true);
 
                     tv_detail_1.setEnabled(true);
@@ -377,10 +353,9 @@ public class NotificationActivity extends AppCompatActivity {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("alarm");
-                    mCodeNotificationSound.setValue("1");
+                    mCodeNotificationSound.setValue("1");  // เขียนค่า alarm ใน database เป็น "1" == เปิดการแจ้งเตือน
 
-
-                } else if (!sw_notification.isChecked()) {
+                } else if (!sw_notification.isChecked()) { //สวิสซ์ปิด
 
                     sp.setEnabled(false);
 
@@ -400,9 +375,7 @@ public class NotificationActivity extends AppCompatActivity {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     DatabaseReference mCodeNotificationSound = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                             .child("notification").child("alarm");
-                    mCodeNotificationSound.setValue("0");
-
-
+                    mCodeNotificationSound.setValue("0"); // เขียนค่า alarm ใน database เป็น "1" == ปิดการแจ้งเตือน
                 }
 
             }
@@ -415,63 +388,48 @@ public class NotificationActivity extends AppCompatActivity {
                                              FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                              DatabaseReference mCodeNotificationType = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "")
                                                      .child("notification").child("type");
-
                                              switch (i) {
                                                  case 0:
                                                      mCodeNotificationType.setValue("0");
                                                      break; //ทุกคิว
-
                                                  case 1:
                                                      mCodeNotificationType.setValue("1");
                                                      break; //จำนวนที่กำหนด
-
                                                  case 2:
                                                      mCodeNotificationType.setValue("2");
                                                      break; //ก่อนเวลาที่กำหนด
                                              }
-
-
                                          }
 
                                          @Override
                                          public void onNothingSelected(AdapterView<?> adapterView) {
-
                                          }
                                      }
-
-
         );
-
+        // เช็คค่าเลขที่ผู้ใช้ระบุมาในในกรณีที่เลือกระบุจำนวนคิวต้องการให้แจ้งเตือนล่วงหน้า
         ed_add_num.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 if (ed_add_num.getText().toString().equals("0") && (i2 >= 1)) {
                     Toast.makeText(getApplicationContext(), "ไม่ควรจะเป็น0", Toast.LENGTH_SHORT).show();
                     ed_add_num.setText("1");
                 }
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 if (ed_add_num.getText().toString().equals("0") && (i2 >= 1)) {
                     Toast.makeText(getApplicationContext(), "ไม่ควรจะเป็น0", Toast.LENGTH_SHORT).show();
                     ed_add_num.setText("1");
                 }
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
-                if (ed_add_num.getText().toString().equals("")||ed_add_num.getText().toString().equals("0")  )
-
-                {
+                if (ed_add_num.getText().toString().equals("")||ed_add_num.getText().toString().equals("0")  ) {
 
                 }else {
-
                     mRootRef.child("customer").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -495,6 +453,7 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
+        // spinner ในกรณีที่เลือกการแจ้งเตือนแบบก่อนเวลา โดยจะเขียนค่าลงไปใน database ตามเวลาของ spinner ที่ผู้ใช้ได้กดเลือก
         sp_2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -504,19 +463,19 @@ public class NotificationActivity extends AppCompatActivity {
                         .child("notification").child("detailType2");
                 switch (i) {
                     case 0:
-                        mCodeNotificationDetailType2.setValue("5");
+                        mCodeNotificationDetailType2.setValue("5");  // 5นาที
                         break;
                     case 1:
-                        mCodeNotificationDetailType2.setValue("10");
+                        mCodeNotificationDetailType2.setValue("10"); // 10นาที
                         break;
                     case 2:
-                        mCodeNotificationDetailType2.setValue("20");
+                        mCodeNotificationDetailType2.setValue("20"); // 20นาที
                         break;
                     case 3:
-                        mCodeNotificationDetailType2.setValue("30");
+                        mCodeNotificationDetailType2.setValue("30"); // 30นาที
                         break;
                     case 4:
-                        mCodeNotificationDetailType2.setValue("60");
+                        mCodeNotificationDetailType2.setValue("60"); // 60นาที
                         break;
                 }
 
@@ -529,6 +488,7 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
+        //ในกรณีที่รูปแบบของร้านค้าไม่สามารถคำนวณเวลาได้ ผู้ใช้จะมี spinner ที่มีรูปแบบการการแจ้งเตือน 2 แบบ คือแบบแจ้งเตือนทุกคิว และแบบแจ้งเตือนก่อนคิวที่ต้องการตามจำนวนที่ระบุ
         sp_3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -539,12 +499,12 @@ public class NotificationActivity extends AppCompatActivity {
 
                 switch (i) {
                     case 0:
-                        mCodeNotificationType.setValue("0");
-                        break; //ทุกคิว
+                        mCodeNotificationType.setValue("0");  //ทุกคิว
+                        break;
 
                     case 1:
-                        mCodeNotificationType.setValue("1");
-                        break; //จำนวนที่กำหนด
+                        mCodeNotificationType.setValue("1"); //จำนวนที่กำหนด
+                        break;
 
                 }
 
@@ -562,33 +522,20 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
 
-/*
-    public void btnSaveNotification(View view) {
-        finish();
-        onBackPressed();
-    }
-
-*/
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.blank,menu);
+        getMenuInflater().inflate(R.menu.blank,menu); // ลักษณะ Tool bar ที่ใช้
         return super.onCreateOptionsMenu(menu);
         //  return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
-            if(id == android.R.id.home){
+            if(id == android.R.id.home){ //กลับไปยัง Activity ก่อนหน้า
                 finish();
-
             }
         return super.onOptionsItemSelected(item);
-
     }
 
 }

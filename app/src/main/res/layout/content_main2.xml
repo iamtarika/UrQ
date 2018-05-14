@@ -54,15 +54,15 @@
             android:id="@+id/num_queue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+
             android:text="0"
-            android:textAppearance="@style/num_q" />
+            android:textAppearance="@style/num_q2" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:layout_marginTop="10dp"
+
             android:layout_marginLeft="0dp"
             android:gravity="center">
 
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="xxxx"
-                android:textSize="@dimen/text_size_25"
+                android:textSize="@dimen/text_size_30"
                 android:textColor="@color/default_text"/>
 
         </LinearLayout>
@@ -212,21 +212,21 @@
         <Button
             android:id="@+id/fill_button"
             style="@style/add_list_q"
-            android:layout_width="300dp"
+            android:layout_width="250dp"
             android:layout_height="65dp"
             android:text="เพิ่มรายการแจ้งเตือน"
             />
         <Button
             android:id="@+id/delete_button"
             style="@style/cancel_button"
-            android:layout_width="300dp"
+            android:layout_width="250dp"
             android:layout_height="65dp"
             android:text="ลบรายการแจ้งเตือนนี้"
             />
 
         <Button
             android:id="@+id/decline_button"
-            android:layout_width="300dp"
+            android:layout_width="250dp"
             android:layout_height="65dp"
             style="@style/cancel_button"
             android:text="ลบรายการ"

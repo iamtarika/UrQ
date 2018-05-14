@@ -8,14 +8,14 @@
     tools:context=".SearchStoreActivity"
     tools:showIn="@layout/activity_search_store"
     android:orientation="vertical"
-    android:layout_marginRight="30dp"
-    android:layout_marginLeft="30dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginLeft="20dp"
   >
 
 
     <ListView
         android:id="@+id/listViewStore"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
 

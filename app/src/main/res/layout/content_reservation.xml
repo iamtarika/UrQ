@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="ร้านนี้เพื่อกดจอง"
             android:textColor="@color/default_text"
-            android:textSize="@dimen/text_size_45" />
+            android:textSize="50sp" />
 
     </LinearLayout>
 
@@ -46,7 +46,7 @@
                 android:id="@+id/text_reserve_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+
                 android:layout_marginTop="10dp"
                 android:textColor="@color/default_text"
                 android:text="เวลาเปิด-ปิด : "
@@ -83,7 +83,7 @@
                 android:id="@+id/text_reserve_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+
                 android:layout_marginTop="10dp"
                 android:text="เปิดจองเวลา : "
                 android:textColor="@color/default_text"
@@ -118,7 +118,7 @@
                 android:id="@+id/text_reserve_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+
                 android:layout_marginTop="10dp"
                 android:text="หากจองต้องรอ :"
                 android:textColor="@color/default_text"
@@ -156,7 +156,7 @@
                 android:id="@+id/tv_rv_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="ระบุจำนวนคนที่จอง :"
@@ -176,7 +176,8 @@
                 android:textColorLink="@color/colorAccent"
                 android:textSize="@dimen/text_size_30"
                 android:layout_gravity="center"
-                android:background="@drawable/edit_text_background"
+
+                android:theme="@style/ThemeSpinner"
                 />
 
 
@@ -211,7 +212,5 @@
 
 
     </LinearLayout>
-
-
 
 </LinearLayout>

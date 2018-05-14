@@ -41,19 +41,12 @@ import java.util.List;
 public class LogInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleApiClient googleApiClient;
-
     private  static final int SIGN_IN_CODE = 777;
-/////////////////////////
     private SignInButton signInButton;
     private ProgressBar progressBar;
-
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
-
-
     private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-/////////////////////////
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +55,12 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);           // ProgressBar
+        signInButton = (SignInButton) findViewById(R.id.login_with_google);  // ปุ่มที่ใช้ ปุ่ม (Google sing-in)
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setColorScheme(SignInButton.COLOR_DARK);
 
-
-
+        // ส่วนของการ Login ผ่าน Gmail
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -74,9 +70,7 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
 
-        signInButton = (SignInButton) findViewById(R.id.login_with_google);
-        signInButton.setSize(SignInButton.SIZE_WIDE);
-        signInButton.setColorScheme(SignInButton.COLOR_DARK);
+        //ปุ่มที่ใช้สำหรับ Login ผ่าน Gmail
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,42 +79,41 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
+        //ส่วนที่ใช้สำหรับตรวจสอบว่า Login
         firebaseAuth =FirebaseAuth.getInstance();
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                //เช็คว่าตรวจสอบตอนนี้ Login อยู่หรือไม่
                 if(user != null){
-                    goMainScreen();
+                    goMainScreen(); //ถ้า Login ให้เรียกฟังชั่น goMainScreen() เพื่อไปหน้า MainActivity
                 }
             }
         };
 
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        firebaseAuth.addAuthStateListener(firebaseAuthListener);
+        firebaseAuth.addAuthStateListener(firebaseAuthListener); // ดูว่ามีการ Log in อยู่หรือไม่
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode ==SIGN_IN_CODE){
-            GoogleSignInResult result =Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result); //เก็บข้อมูลที่ได้ทำการ Log in w;h
         }
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
         if(result.isSuccess()){
-            //goMainScreen();
-            firebaseAuthWithGoogle(result.getSignInAccount());
-        }else {
-           // Toast.makeText(this, "No eiei",Toast.LENGTH_SHORT).show();
+            firebaseAuthWithGoogle(result.getSignInAccount()); // ถ้า Login สำเร็จจะมาเรียก firebaseAuth มาใช้
         }
     }
 
@@ -132,14 +125,10 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
         AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(),null);
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                //  Toast.makeText(getApplicationContext(),"cdcdcdc",Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task) { //โดยจะดูว่ามีการ Log in แล้วหรือยัง ถ้าอยู่ในระหว่างที่ตรวจสอบข้อมูล จะมี ProgreaaBar ขึ้นมา
                 progressBar.setVisibility(View.GONE);
                 signInButton.setVisibility(View.VISIBLE);
-
-                if (!task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(),"rr",Toast.LENGTH_SHORT).show();;
-                }
+                //if (!task.isSuccessful()){ Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT).show();; }
             }
         });
     }
@@ -147,18 +136,16 @@ public class LogInActivity extends AppCompatActivity implements GoogleApiClient.
     private void goMainScreen() {
         Intent intent = new Intent(this,MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivity(intent); // ไปที่หน้า MainActivity
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(firebaseAuthListener != null){
+        if(firebaseAuthListener != null){ //ในกรณีที่ปิด Activity จะมีการ save ค่าไว้เพื่อไม่ต้อง Log in ซ้ำอีกครั้ง
             firebaseAuth.removeAuthStateListener(firebaseAuthListener);
         }
     }
-
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

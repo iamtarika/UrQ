@@ -8,14 +8,15 @@
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="20dp"
-    android:background="@color/list_color">
+    android:background="#f5f5f5">
 
 
     <TextView
         android:id="@+id/nameShop"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:paddingTop="5dp"
         android:text="ชื่อร้าน............."
         android:textColor="#000000"

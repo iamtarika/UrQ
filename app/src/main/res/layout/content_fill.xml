@@ -18,7 +18,8 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="40dp"
         android:text="ระบุสถานที่"
-        android:textSize="@dimen/text_size_25"
+        android:textSize="@dimen/text_size_24"
+        android:textColor="@color/default_text"
         />
 
     <Spinner
@@ -29,8 +30,9 @@
         android:layout_gravity="center"
         android:layout_marginLeft="30sp"
         android:layout_marginRight="30sp"
-        android:textSize="@dimen/text_size_30"
-
+        android:textSize="@dimen/text_size_35"
+        android:theme="@style/ThemeSpinner"
+        android:textColor="@color/black_grey"
         />
 
 
@@ -39,9 +41,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="หมายเลขคิว"
-        android:textSize="@dimen/text_size_25"
+        android:textSize="@dimen/text_size_24"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/default_text"/>
 
     <EditText
         android:id="@+id/et_num_q"
@@ -54,7 +57,8 @@
         android:textColorLink="@color/colorPrimaryDark"
         android:textSize="@dimen/text_size_30"
         android:layout_gravity="center"
-
+        android:theme="@style/ThemeSpinner"
+        android:textColor="@color/black_grey"
         />
 
     <TextView
@@ -62,9 +66,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ระบุ Pin ของคุณ"
-        android:textSize="@dimen/text_size_25"
+        android:textSize="@dimen/text_size_24"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/default_text"/>
 
     <EditText
         android:id="@+id/et_pin"
@@ -76,10 +81,9 @@
         android:layout_marginLeft="30sp"
         android:textColorLink="@color/colorPrimaryDark"
         android:layout_gravity="center"
-        android:background="@android:color/transparent"
-        android:singleLine="true"
-        android:letterSpacing="0.2"
         android:textSize="@dimen/text_size_30"
+        android:theme="@style/ThemeSpinner"
+        android:textColor="@color/black_grey"
         />
 
     <Button

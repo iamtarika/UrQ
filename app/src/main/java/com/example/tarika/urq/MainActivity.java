@@ -4,8 +4,12 @@ package com.example.tarika.urq;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -55,6 +59,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -83,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     String[] arr_3;
     String[] arr_4;
     String[] arr_5;
+    String[] arr_type;
+    String[] arr_type1;
+    String[] arr_type2;
+    String[] arr_alarm;
 
     String countAdd;
     String nameShop = ".";
@@ -112,10 +122,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     String timeOut = ".";
     int hr;
     int mi;
-
-    TextView ttt;
     int callNow1;
     int callNow2;
+    int p=0;
+
+    String timeBefore;
+    int time ;
+    String avgServiceTime2;
+    String data2;String  alarm ;
+    String  detailType ;
+    String detailType2;
+    String  type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,20 +148,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         tv_specify_q = (TextView) findViewById(R.id.tv_specify_q);
-
-        ttt = (TextView) findViewById(R.id.ttt);
-
         tv_specify_q = (TextView) findViewById(R.id.tv_specify_q);
         btn_fill_inform = (Button) findViewById(R.id.fill_inform);
-
         lv_show_added = (ListView) findViewById(R.id.lv_show_added);
         list = new ArrayList<ListSearchStore>();
-
-
         final Typeface tf_1 = Typeface.createFromAsset(getAssets(), "fonts/TEPC_CM-Prasanmit.ttf");
         final Typeface tf_2 = Typeface.createFromAsset(getAssets(), "fonts/TEPC_CM-Prasanmit_Bol.ttf");
         tv_specify_q.setTypeface(tf_1);
         btn_fill_inform.setTypeface(tf_2);
+
+        // ในส่วนของ Log in ใช้บริการ google login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -158,326 +171,363 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    list.clear();
-                    View headerView = navigationView.getHeaderView(0);
-                    nameGoogle = (TextView) headerView.findViewById(R.id.nameGoogle);
-                    textEmail = (TextView) headerView.findViewById(R.id.emailGoogle);
+                if (user != null) {  // เตรียบสอบดูว่าตอนนี้ Login อยู่หรือไม่
+                    list.clear();   // ทำ Listview ให้ว่าง
+
+                    View headerView = navigationView.getHeaderView(0);  // ประกาศ HeaderView (navigation)
+                    nameGoogle = (TextView) headerView.findViewById(R.id.nameGoogle); // ดึงค่า ชื่อ จาก Firebase(Gmail) Login เพื่อแสดงผล
                     nameGoogle.setText(user.getDisplayName());
+                    textEmail = (TextView) headerView.findViewById(R.id.emailGoogle); // ดึงค่า อีเมล จาก Firebase(Gmail) Login เพื่อแสดงผล
                     textEmail.setText(user.getEmail());
-                    imageView = (ImageView) headerView.findViewById(R.id.imageView);
+
+                    imageView = (ImageView) headerView.findViewById(R.id.imageView); // ดึงค่า รูป Profile จาก Firebase(Gmail) Login เพื่อแสดงผล
                     Glide.with(headerView.getContext()).load(user.getPhotoUrl()).into(imageView);
 
-                    nameGoogle.setTypeface(tf_2);
-                    textEmail.setTypeface(tf_1);
-
+                    nameGoogle.setTypeface(tf_2); // ปรับตัวอักษร
+                    textEmail.setTypeface(tf_1);  // ปรับตัวอักษร
+
+                    //เข้าถึงดาต้าเบสในส่วนของ User (ฝั่งร้านค้า---ข้อมูลต่างๆของร้านค้า)
+                    mRootRef.child("user").addValueEventListener(new ValueEventListener() {
+                                                                     @Override
+                                                                     public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                        //เข้าถึงดาต้าเบสในส่วนของ Customer (ฝั่งผู้ใช้บริการ) โดยใช้ค่า Uid ระบุตัวตน
+                                                                         mRootRef.child("customer").child(user.getUid() + "").child("Add").addValueEventListener(new ValueEventListener() {
+                                                                             @Override
+                                                                             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                                 checkListAdded = String.valueOf(dataSnapshot.getChildrenCount()); // นับจำนวนร้านค้าที่ผู้ใช้บริการได้เพิ่มไว้ในฐานข้อมูล
+
+                                                                                 list.clear(); // ทำให้ Listview ทั้งหมดเป็นค่าว่าง
+
+                                                                                 if (Integer.parseInt(checkListAdded) == 0) {   //กรณ๊ที่ผู้ใช้บริการไม่มีร้านค้าที่เพิ่มอยู่ในระบบ
+                                                                                     tv_specify_q.setVisibility(View.VISIBLE);  // Textview จะแสดงคำว่า "ไม่มีรายการคิวที่ต้องแจ้งเตือน หากต้องการเพิ่มรายการแจ้งเตือน กรุณากดปุ่ม"
+                                                                                     lv_show_added.setVisibility(View.GONE);    // listview จะถูกซ่อน
+
+                                                                                 } else {
+                                                                                     tv_specify_q.setVisibility(View.GONE);     // จะซ่อนText "ไม่มีรายการคิวที่ต้องแจ้งเตือน หากต้องการเพิ่มรายการแจ้งเตือน กรุณากดปุ่ม"
+                                                                                     lv_show_added.setVisibility(View.VISIBLE); // listview จะปรากฏ
+                                                                                     list.clear();                              // ทำให้ Listview ทั้งหมดเป็นค่าว่าง
+                                                                                     checkListAdded = String.valueOf(dataSnapshot.getChildrenCount()); // นับจำนวนร้านค้าที่ผู้ใช้บริการได้เพิ่มไว้ในฐานข้อมูล
+
+                                                                                     arr_1 = new String[Integer.parseInt(checkListAdded)];      // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บชื่อร้านค้า
+                                                                                     arr_2 = new String[Integer.parseInt(checkListAdded)];      // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเเก็บ UId ร้านค้า
+                                                                                     arr_3 = new String[Integer.parseInt(checkListAdded)];      // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเลขคิว
+                                                                                     arr_4 = new String[Integer.parseInt(checkListAdded)];      // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บจำนวนที่ต้องรอคิว (ได้จากการคำนวน)
+                                                                                     arr_5 = new String[Integer.parseInt(checkListAdded)];      // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บค่า UniqueId
+                                                                                     arr_type = new String[Integer.parseInt(checkListAdded)];   // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับระบุรูปแบบการแจ้งเตือน
+                                                                                     arr_type1 = new String[Integer.parseInt(checkListAdded)];  // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บค่าเพื่อระบุปิด-ปิดแจ้งเตือน
+                                                                                     arr_type2 = new String[Integer.parseInt(checkListAdded)];  // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บค่าตัวเลข
+                                                                                     arr_alarm = new String[Integer.parseInt(checkListAdded)];  // สร้าง array ที่มีขนาดเท่ากับจำนวณร้านค้าที่มี สำหรับเก็บค่าเพื่อระบุปิด-ปิดเสียงการแจ้งเตือน
+
+                                                                                     Log.d("customer", checkListAdded + "//");
+
+                                                                                     m = 0;
+                                                                                     for (DataSnapshot shopSnapshot : dataSnapshot.getChildren()) {
+
+                                                                                         //ดึงค่าต่างๆที่ต้องใช้มาจาก Database
+                                                                                         nameShop = String.valueOf(shopSnapshot.child("nameShop").getValue());
+                                                                                         noShop = String.valueOf(shopSnapshot.child("noShop").getValue());
+                                                                                         noQ = String.valueOf(shopSnapshot.child("noQ").getValue());
+                                                                                         getUniqueId = String.valueOf(shopSnapshot.child("noCodeId").getValue());
+                                                                                         alarm = String.valueOf(shopSnapshot.child("notification").child("alarm").getValue());
+                                                                                         detailType = String.valueOf(shopSnapshot.child("notification").child("detailType").getValue());
+                                                                                         detailType2 = String.valueOf(shopSnapshot.child("notification").child("detailType2").getValue()); // นาทีที่เก็บ
+                                                                                         type = String.valueOf(shopSnapshot.child("notification").child("type").getValue()); //0,1/2
+
+                                                                                         arr_1[m] = new String(nameShop);           // นำชื่อร้านมาใส่ใน array
+                                                                                         arr_2[m] = new String(noShop);             // นำชื่อ Uid ร้านค้ามาใส่ใน array
+                                                                                         arr_3[m] = new String(noQ);                // นำชื่อ เลขคิว ร้านค้ามาใส่ใน array
+                                                                                         arr_5[m] = new String(getUniqueId);        // นำชื่อ UniqueId ร้านค้ามาใส่ใน array
+                                                                                         arr_4[m] = new String("");                 // ""--จะนำค่าที่ได้มาใส่ในภายหลัง
+                                                                                         arr_type[m] = new String(type);            // นำสถานะรูปแบบของการแจ้งตือนมาใส่ใน array
+                                                                                         arr_type1[m] = new String(detailType);     // นำค่าจำนวนคิวที่ต้องการให้แจ้งเตือนก่อนมาใส่ใน array
+                                                                                         arr_type2[m] = new String(detailType2);    // นำค่าจำนวนเวลาที่ให้แจ้งเตือนก่อนหน้ามาใส่ใน array
+                                                                                         arr_alarm[m] = new String(alarm);          // นำค่าที่ใช้เช็คเปิดปิดเสียงมาใส่ใน array
 
-                    mRootRef.child("customer").child(user.getUid() + "").child("Add").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                                         p = 0;
+                                                                                         //เข้าถึงข้อมูล Database ฝั่ง user
+                                                                                         mRootRef.child("user").addValueEventListener(new ValueEventListener() {
+                                                                                             @Override
+                                                                                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            checkListAdded = String.valueOf(dataSnapshot.getChildrenCount());
 
-                            list.clear();
+                                                                                                 if (p >= arr_1.length) {
+                                                                                                     return;
+                                                                                                 }
+                                                                                                 if (p >= arr_2.length) {
+                                                                                                     return;
+                                                                                                 }
+                                                                                                 if (p >= arr_3.length) {
+                                                                                                     return;
+                                                                                                 }
+
+                                                                                                 String repeat = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").child(arr_3[p] + "").child("repeat").getValue());
+                                                                                                 if (repeat.equals("1")) { // เช็คดูว่ามีการเรียกคิวของเราที่มีอยู่หรือไม่
+                                                                                                     noti(arr_1[p]);        // เรียก function
+                                                                                                     DatabaseReference repeatShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(arr_3[p] + "").child("repeat");
+                                                                                                     repeatShopRef.setValue("0");   // กลับไป set ค่า เพื่อให้ระบบเข้าใจว่า ยังไม่มีการเรียกคิว
+                                                                                                 }
 
-                            if (Integer.parseInt(checkListAdded) == 0) {
-                                tv_specify_q.setVisibility(View.VISIBLE);
-                                lv_show_added.setVisibility(View.GONE);
+                                                                                                 //ในส่วนของการคำนวณเวลา
+                                                                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                                                                 String qType = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("shopData").child("qType").getValue());
+                                                                                                 String avgServiceTime = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("shopData").child("avgServiceTime").getValue());
 
+                                                                                                 /*
+                                                                                                 if (qType.equals("0")) { //การกรณีที่ qType เท่ากับ 0 จะแปลว่าร้านนั้นสามารถคำนวนเวลาได้
 
-                            } else {
-                                tv_specify_q.setVisibility(View.GONE);
-                                lv_show_added.setVisibility(View.VISIBLE);
-                                list.clear();
-                                checkListAdded = String.valueOf(dataSnapshot.getChildrenCount());
 
-                                arr_1 = new String[Integer.parseInt(checkListAdded)];
-                                arr_2 = new String[Integer.parseInt(checkListAdded)];
-                                arr_3 = new String[Integer.parseInt(checkListAdded)];
-                                arr_4 = new String[Integer.parseInt(checkListAdded)];
-                                arr_5 = new String[Integer.parseInt(checkListAdded)];
+                                                                                                     counterQnumber = Integer.valueOf(String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").getChildrenCount())); // จำนวน node ที่อยู่ข้างใน
+                                                                                                     int numServer = Integer.parseInt(String.valueOf(dataSnapshot.child(arr_2[p] + "").child("shopData").child("numServer").getValue()));
 
-                                m = 0;
-                                for (DataSnapshot shopSnapshot : dataSnapshot.getChildren()) {
+                                                                                                     String[] arr_temp = new String[counterQnumber+2];
+                                                                                                     avgServiceTime2 = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("shopData").child(avgServiceTime + "").getValue()); // เวลาประมาณในการบริการของร้านค้า
 
-                                    nameShop = String.valueOf(shopSnapshot.child("nameShop").getValue());
-                                    noShop = String.valueOf(shopSnapshot.child("noShop").getValue());
-                                    noQ = String.valueOf(shopSnapshot.child("noQ").getValue());
-                                    getUniqueId = String.valueOf(shopSnapshot.child("noCodeId").getValue());
-                                    arr_1[m] = new String(nameShop);
-                                    arr_2[m] = new String(noShop); // Uid
-                                    arr_3[m] = new String(noQ);
-                                    arr_5[m] = new String(getUniqueId);
+                                                                                                     for (int i = 1; i <= counterQnumber; i++) {   // โดยจะเริ่มจากคำนวนคิวของคิวแรก จนถึงคิวสุดท้ายที่มีในร้านนั้น
 
-                                    /////////////////////////////////////////////การแจ้งเตือน
-                                    final String qType = String.valueOf(shopSnapshot.child("qType").getValue()); // เช็คว่าคำนวณเวลามั้ย? 0คำนวณ 1 ไม่คำนวณ
-                                 //   String sound = String.valueOf(shopSnapshot.child("notification").child("sound").getValue());
-                                    final String alarm = String.valueOf(shopSnapshot.child("notification").child("alarm").getValue());
-                                    final String type = String.valueOf(shopSnapshot.child("notification").child("type").getValue()); //0,1/2
-                                    final String detailType = String.valueOf(shopSnapshot.child("notification").child("detailType").getValue()); // จำนวณที่ให้แจ้งก่อนกี่คิว
-                                    final String detailType2 = String.valueOf(shopSnapshot.child("notification").child("detailType2").getValue()); // นาทีที่เก็บ
-/////////////บัค///////////////////////////////////////////////////
+                                                                                                         timeOut = String.valueOf(dataSnapshot.child(arr_2[p] + "")
+                                                                                                         .child("qNumber").child(i + "").child("time").child("timeOut").getValue()); // เวลารอประมาณที่คำนวณได้ของแต่ละคิว
+                                                                                                         countStatus = String.valueOf(dataSnapshot.child(arr_2[p] + "")
+                                                                                                         .child("qNumber").child(i + "").child("status").getValue()); // สถานะของคิวๆนั้นๆ
 
-                                    mRootRef.child("user").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                            String counter = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("status").getValue());
-                                            String repeat = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ + "").child("repeat").getValue());
-                                            String avgServiceTime = String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("avgServiceTime").getValue());
 
+                                                                                                         if (countStatus.equals("finish")) { // ถ้าสถานะเป็น finish จะระบุเวลารอเป็น 0
+                                                                                                             DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                             timeWaitShopRef.setValue("0");
+                                                                                                             arr_temp[i] = new String ("0");
 
-                                            if (repeat.equals("1")) {
-                                                noti(nameShop);
-                                                DatabaseReference repeatShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(noQ + "").child("repeat");
-                                                repeatShopRef.setValue("0");
-                                            }
+                                                                                                         } else if (countStatus.equals("doing")) { // ถ้าสถานะเป็น doing
 
-                                            if (counter.equals("finish")) {
-                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
-                                                qWaitShopRef.setValue("0");
+                                                                                                             if (!timeOut.equals("null")) { //ตรวจสอบว่าเวลรอเป็นค่าว่าง
 
-                                            }else if (counter.equals("doing")) {
-                                                noti(nameShop);
-                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
-                                                qWaitShopRef.setValue("0");
+                                                                                                                 DateFormat timeNow = new SimpleDateFormat("HH:mm");
+                                                                                                                 String getTimeNow = timeNow.format(Calendar.getInstance().getTime());  //เวลาปัจจุบัน
+                                                                                                                 String[] timeOutSplit = timeOut.split(":"); /// ออก
+                                                                                                                 String[] currentTimeSplit = getTimeNow.split(":"); // ปัจจุบัน
 
-                                            } else if (counter.equals("q")) {
-                                                int k = 1;
-                                                countStatus = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(k + "").child("status").getValue());
-                                                counterQnumber = Integer.valueOf(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").getChildrenCount()));
-                                                countFinish = 0;
-                                                countDoing = 0;
-                                                countQ = 0;
+                                                                                                                   // ตรวจสอบดูว่าเวลาปัจจุบันมากกว่าเวลาที่คาดลูกค้าจะออกจากร้านหรือไม่ ถ้าน้อยให้นำเวลาปัจจุบันมาลบกับเวลาที่คาดว่าลูกค้าจะออกจากร้านแล้วนำผลต่างแปลงออกมาเป็นนาที ถ้ามากกว่าให้กำหนดเวลาเป็น0
+                                                                                                                 if (Integer.parseInt(currentTimeSplit[0]) > Integer.parseInt(timeOutSplit[0])) {
 
+                                                                                                                   //  DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                                   //  timeWaitShopRef.setValue("0");
+                                                                                                                     arr_temp[i] = new String ("0");
 
-                                                for (int i = 1; i <= counterQnumber; i++) {
+                                                                                                                 } else if ((Integer.parseInt(timeOutSplit[0]) == Integer.parseInt(currentTimeSplit[0])) &&
+                                                                                                                         (Integer.parseInt(timeOutSplit[1]) >= Integer.parseInt(currentTimeSplit[1]))) {
 
-                                                    countStatus = String.valueOf(dataSnapshot.child(noShop+"").child("qNumber").child(i + "").child("status").getValue());
+                                                                                                                     mi = Integer.parseInt(timeOutSplit[1]) - Integer.parseInt(currentTimeSplit[1]);
+                                                                                                                     hr = 0;
 
-                                                    if (countStatus.equals("finish")) {
-                                                        countFinish++;
-                                                    } else if (countStatus.equals("doing")) {
-                                                        countDoing++;
-                                                    } else if (countStatus.equals("q")) {
-                                                        countQ++;
-                                                    }
+                                                                                                                 } else {
 
-                                                }
-                                                countFinishAndDoing = countFinish + countDoing;
+                                                                                                                     hr = Integer.parseInt(timeOutSplit[0]) - 1;
+                                                                                                                     mi = Integer.parseInt(timeOutSplit[1]) + 60 - Integer.parseInt(currentTimeSplit[1]);
+                                                                                                                     hr = hr - Integer.parseInt(currentTimeSplit[0]);
+                                                                                                                     hr = hr * 60;
+                                                                                                                     int HrMi = hr + mi;
 
-                                                DatabaseReference qWaitShopRef = mRootRef.child("customer").child(user.getUid()).child("Add").child(getUniqueId + "").child("qWait");
-                                                qWaitShopRef.setValue(counterQnumber-countFinish-countDoing+"");
+                                                                                                                   //  DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                                   //  timeWaitShopRef.setValue(HrMi);
+                                                                                                                     arr_temp[i] = new String (HrMi+"");
+                                                                                                                 }
 
-                                            }
+                                                                                                             } else if (timeOut.equals("null")) { //ตรวจสอบว่าเวลรอเป็นค่าว่าง
+                                                                                                               //  DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                               //  timeWaitShopRef.setValue(avgServiceTime + "");
+                                                                                                                 arr_temp[i] = new String (avgServiceTime+""); // นำค่าของเวลารอโดยประมาณที่ร้านค้าระบุให้มาแสดงผลเป็นเวลารอ
 
 
+                                                                                                             }
 
-                                            if (qType.equals("0")) {
-                                                //คำนวนเวลา
 
-                                                counterQnumber = Integer.valueOf(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").getChildrenCount())); // จำนวน node ที่อยู่ข้างใน
-                                                int numServer = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("numServer").getValue()));
+                                                                                                         } else if (countStatus.equals("q")) {// ถ้าสถานะเป็น q
 
-                                                for (int i = 1; i <= counterQnumber; i++) {
-                                                    timeOut = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(i + "").child("time").child("timeOut").getValue());
-                                                    countStatus = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(i + "").child("status").getValue());
+                                                                                                             if (i <= numServer) { //ถ้าจำนวนคิวที่คำนวณเวลา น้อยกว่าจำนวนโต๊ะที่ร้านรองรับให้เซ็ตค่าเวลาเป็น0
+                                                                                                                 DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                                 timeWaitShopRef.setValue("0");
+                                                                                                                 arr_temp[i] = new String ("0");
 
+                                                                                                             } else { //ถ้าจำนวนคิวที่คำนวณเวลา มากกว่าจำนวนโต๊ะที่ร้านร้องรับจะนำเวลาก่อนหน้าของคิวปัจจุบ-จำนวนโต๊ะที่ร้านมี แล้วนำค่าที่ได้ไปบวกกับเวลาเฉลี่ยนที่ต้องรอของแต่ละคิว(avgServiceTime) จะได้เป็นเวลาโดยประมาณ
+                                                                                                                        int tempTime = i - numServer;
+                                                                                                                        data2 = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("shopData").child("avgServiceTime").getValue());
+                                                                                                                        //timeBefore = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").child(tempTime+"").child("time").child("timeWait").getValue());
 
-                                                    if (countStatus.equals("finish")) {
-                                                        DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                        timeWaitShopRef.setValue("0");
+                                                                                                                        int timeAll ;
+                                                                                                                        timeAll = Integer.parseInt(data2)+Integer.parseInt(arr_temp[tempTime]);
+                                                                                                                        arr_temp[i] = new String (timeAll+"");
 
-                                                    } else if (countStatus.equals("doing")) {
-                                                        if (!timeOut.equals("null")) {
+                                                                                                                        DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                                                         timeWaitShopRef.setValue(Integer.parseInt(data2)+Integer.parseInt(timeBefore)+"");
+                                                                                                                        arr_temp[i] = new String (timeAll+"");
 
-                                                            DateFormat timeNow = new SimpleDateFormat("HH:mm");
-                                                            String getTimeNow = timeNow.format(Calendar.getInstance().getTime());
-                                                            String[] timeOutSplit = timeOut.split(":"); /// ออก
-                                                            String[] currentTimeSplit = getTimeNow.split(":"); // ปัจจุบัน
 
-                                                            if (Integer.parseInt(currentTimeSplit[0]) > Integer.parseInt(timeOutSplit[0])) {
+                                                                                                             }
 
-                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                                timeWaitShopRef.setValue("0");
 
-                                                            } else if ((Integer.parseInt(timeOutSplit[0]) == Integer.parseInt(currentTimeSplit[0])) &&
-                                                                    (Integer.parseInt(timeOutSplit[1]) >= Integer.parseInt(currentTimeSplit[1]))) {
+                                                                                                         }
 
-                                                                mi = Integer.parseInt(timeOutSplit[1]) - Integer.parseInt(currentTimeSplit[1]);
-                                                                hr = 0;
+                                                                                                     }
 
-                                                            } else {
+                                                                                                     for (int i = 1; i <= counterQnumber; i++){
 
-                                                                hr = Integer.parseInt(timeOutSplit[0]) - 1;
-                                                                mi = Integer.parseInt(timeOutSplit[1]) + 60 - Integer.parseInt(currentTimeSplit[1]);
-                                                                hr = hr - Integer.parseInt(currentTimeSplit[0]);
-                                                                // hr = hr/(hr%12);
-                                                                hr = hr * 60;
-                                                                int HrMi = hr + mi;
+                                                                                                         DatabaseReference timeWaitShopRef = mRootRef.child("user").child(arr_2[p] + "").child("qNumber").child(i + "").child("time").child("timeWait");
+                                                                                                         timeWaitShopRef.setValue(arr_temp[i]);
 
-                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                                timeWaitShopRef.setValue(HrMi);
-                                                            }
+                                                                                                     }
 
-                                                        } else if (timeOut.equals("null")) {
-                                                            DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                            timeWaitShopRef.setValue(avgServiceTime + "");
+                                                                                                 }
+                                                                                                 */
 
+                                                                                                 counterQnumber = Integer.parseInt(String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").getChildrenCount())); // นับจำนวณคิวที่ต้องมีทั้งหมด
+                                                                                                 countFinish = 0;
+                                                                                                 countDoing = 0;
+                                                                                                 countQ = 0;
 
-                                                        }
+                                                                                                 //ตรวจสอบสถานะคิวทั้งหมดของคิวที่มี
+                                                                                                 for (int i = 1; i <= counterQnumber; i++) {
 
+                                                                                                     countStatus = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").child(i + "").child("status").getValue()); // สถานะคิวปัจจุบันที่กำลังตรวจสอบ
 
-                                                    } else if (countStatus.equals("q")) {
+                                                                                                     if (countStatus.equals("finish")) {
+                                                                                                         countFinish++; // นับจำนวณคิวที่ให้บริการไปแล้ว
+                                                                                                     } else if (countStatus.equals("doing")) {
+                                                                                                         countDoing++;  // นับจำนวณคิวที่กำลังได้รับบริการ
+                                                                                                     } else if (countStatus.equals("q")) {
+                                                                                                         countQ++;      // นับจำนวณคิวที่กำลังรอ
+                                                                                                     }
 
+                                                                                                 }
+                                                                                                 //เช็คสถานะปัจจุบันของคิวที่ตรวจสอบ
+                                                                                                 countStatus = String.valueOf(dataSnapshot.child(arr_2[p] + "").child("qNumber").child(arr_3[p] + "").child("status").getValue()); // get ค่าคิวปัจจุบัน
+                                                                                                 if (countStatus.equals("q")) {
+                                                                                                     countQ--;
+                                                                                                 }
+                                                                                                 if (countStatus.equals("doing")) {     // แปลว่าไม่มีคิวที่ต้องรอ คิวที่ต้องรอจะเป็น 0
+                                                                                                     countFinish =0 ;
+                                                                                                     countDoing =0;
+                                                                                                 }
+                                                                                                 if (countStatus.equals("finish")) {    // แปลว่าได้ให้บริการแล้ว คิวที่ต้องรอจะเป็น 0
+                                                                                                     countFinish =0 ;
+                                                                                                     countDoing =0;
+                                                                                                 }
 
-                                                        if (countStatus.equals("q")) {
 
+                                                                                                 arr_4[p] = new String(countDoing+countFinish + ""); // เก็บค่าคิวที่ต้องรอไปไว้ใน arr_4
 
-                                                            if (i <= numServer) {
-                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                                timeWaitShopRef.setValue("0");
+                                                                                                 test(p, p);
 
-                                                            }else {
+                                                                                                 if (arr_type[p].equals("0")) { // ถ้าการสถานะแจ้งเตือนเป็น 0 ให้เรียกใช้ทุกคั้งเมื่อมีการเปลี่ยนแปลง
 
-                                                                String timeBefore = String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(i-numServer+"").child("time").child("timeWait").getValue());
-                                                                String avgServiceTime2 = String.valueOf(dataSnapshot.child(noShop + "").child("shopData").child("avgServiceTime").getValue());
-                                                                int time ;
-                                                                time = Integer.parseInt(timeBefore)+Integer.parseInt(avgServiceTime2);
+                                                                                                     mRootRef.child("user").child(arr_2[p]+"").child("qNumber").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                                    @Override
+                                                                                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                                DatabaseReference timeWaitShopRef = mRootRef.child("user").child(noShop + "").child("qNumber").child(i + "").child("time").child("timeWait");
-                                                                timeWaitShopRef.setValue(time+"");;
+                                                                                                        //notiEvery(arr_1[p],3);
+                                                                                                    }
+                                                                                                    @Override
+                                                                                                    public void onCancelled(DatabaseError databaseError) {
 
+                                                                                                    }});
 
+                                                                                                 } else if (arr_type[p].equals("1")) { // ถ้าการสถานะแจ้งเตือนเป็น 1 ให้แจ้งเตือนก่อนถึงคิวตามจำนวนที่ต้องการ
+                                                                                                     // ตามจำนวนที่กำหนด
+                                                                                                     if (Integer.parseInt(arr_type1[p]) == countQ) {
+                                                                                                         notiNumber(arr_1[p], countQ);
+                                                                                                     }
+                                                                                                 } else if (arr_type[p].equals("2")) { // ถ้าการสถานะแจ้งเตือนเป็น 2 ให้แจ้งเตือนก่อนเวลาที่กำหนดไว้
 
-                                                            }
-                                                        }
+                                                                                                    int getTime = Integer.parseInt(String.valueOf(dataSnapshot.child(arr_2[p] + "")
+                                                                                                            .child("qNumber").child(arr_3[p] + "").child("time").child("timeWait").getValue())); // ดึงค่าเวลาที่ต้องรอ
+                                                                                                    if (getTime <= Integer.parseInt(arr_type2[m])) {
+                                                                                                        notiTime(arr_1[p], getTime);
+                                                                                                    }
 
+                                                                                                 }
+                                                                                                 p++;
+                                                                                             }
 
+                                                                                             @Override
+                                                                                             public void onCancelled(DatabaseError databaseError) {
 
-                                                    }
+                                                                                             }
+                                                                                         });
+                                                                                         m++;
+                                                                                     }
 
+                                                                                 }
+                                                                                 lv_show_added.setOnItemClickListener(new AdapterView.OnItemClickListener() {       // เมื่อกด list view แล้วให้ส่งค่าต่างๆไปยังหน้า Activity ต่อไป
+                                                                                     @Override
+                                                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                                                         Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                                                                                         intent.putExtra("location", arr_2[position]); // String ---- ส่งชื่อร้านที่ผู้ใช้เลือกไปยัง Main2Activity
+                                                                                         intent.putExtra("myNumber", arr_3[position]); // String ---- ส่งเลขคิวปัจจุบันของผู้ใช้ไปยัง Main2Activity
+                                                                                         intent.putExtra("uniqueId", arr_5[position]); // String ---- ส่ง UniqueId ปัจจุบันของผู้ใช้ไปยัง Main2Activity
+                                                                                         startActivity(intent);
+                                                                                     }
+                                                                                 });
+                                                                             }
 
-                                                }
-                                            }
+                                                                             @Override
+                                                                             public void onCancelled(DatabaseError error) {
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                            if(type.equals("0")){
+                                                                             }
+                                                                         });
 
+                                                                     }
 
-                                            }else if(type.equals("1")){
-                                                // ตามจำนวนที่กำหนด
-                                                if (Integer.parseInt(detailType)==Integer.parseInt(qWait)){
-                                                    notiNumber(nameShop,Integer.parseInt(qWait));
-                                                }
+                                                                     @Override
+                                                                     public void onCancelled(DatabaseError databaseError) {
 
-                                            }else if(type.equals("2")){
-
-                                                int getTime = Integer.parseInt(String.valueOf(dataSnapshot.child(noShop + "").child("qNumber").child(noQ+"").child("time").child("timeWait").getValue()));
-
-                                                if (getTime<=Integer.parseInt(detailType2)){
-
-                                                    notiTime(nameShop, getTime);
-
-                                                }
-
-                                            }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        }
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-/////////////////////////////////////////////////////////////////
-
-
-///////////////บัค///////////////////////////////////////////////////
-                                    qWait = String.valueOf(shopSnapshot.child("qWait").getValue());
-                                    arr_4[m] = new String(qWait + "");
-
-
-                                    ListSearchStore l_search_store = new ListSearchStore(arr_1[m], arr_4[m]);
-                                    list.add(l_search_store);
-
-                                    m++;
-
-                                }
-
-
-                            }
-
-                            adapter = new ListSearchStore_adapter();
-                            lv_show_added.setAdapter(adapter);
-
-                            lv_show_added.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-                                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                                    intent.putExtra("location", arr_2[position]); // String
-                                    intent.putExtra("myNumber", arr_3[position]); // String
-                                    intent.putExtra("uniqueId", arr_5[position]); // String
-                                    startActivity(intent);
-
-
-                                }
-                            });
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-
-                        }
-                    });
-
+                                                                     }
+                                                                 });
 
                 } else {
-                    GoLogInScrean();
+                    GoLogInScrean(); // เรียกฟังค์ชั่น GoLogInScrean() เพื่อไปยังหน้า LogInActivity
                 }
             }
+
+
+
         };
 
-
+        // ส่วนของ Navigation (แถบข้างๆ)
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 int id = item.getItemId();
 
-                if (id == R.id.nav_camera) {
+                if (id == R.id.nav_camera) { // กดเพื่อไปยัง Activity ค้นหา
                     Intent intent = new Intent(getApplicationContext(), SearchStoreActivity.class);
                     startActivity(intent);
 
-                } else if (id == R.id.nav_reservation) {
+                } else if (id == R.id.nav_reservation) { // กดเพื่อไปยัง Activity จองคิวออนไลน์
 
                     Intent intent = new Intent(getApplicationContext(), ReserveOnlineActivity.class);
                     startActivity(intent);
 
-                } else if (id == R.id.nav_logout) {
+                } else if (id == R.id.nav_logout) {     // กดเพื่อ ออกจากระบบ
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_main_logout, null);
 
                     TextView tv_dialog = (TextView) mView.findViewById(R.id.tv_dialog);
-                    tv_dialog.setTypeface(tf_2);
+
 
                     btn_main_dialog_Logout = (Button) mView.findViewById(R.id.btn_main_dialog_Logout);
                     btn_main_dialog_cancel = (Button) mView.findViewById(R.id.btn_main_dialog_cancel);
 
+                    tv_dialog.setTypeface(tf_2);
                     btn_main_dialog_Logout.setTypeface(tf_2);
                     btn_main_dialog_cancel.setTypeface(tf_2);
 
-                    mBuilder.setView(mView);
+                    mBuilder.setView(mView); // สร้าง pop up ขึ้นมา
                     final AlertDialog dialog = mBuilder.create();
                     dialog.show();
                     ;
 
-                    btn_main_dialog_Logout.setOnClickListener(new View.OnClickListener() {
+                    btn_main_dialog_Logout.setOnClickListener(new View.OnClickListener() { //ปิด pop up ที่ใช้ถาม
                         @Override
                         public void onClick(View view) {
                             dialog.cancel();
@@ -485,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     });
 
-                    btn_main_dialog_cancel.setOnClickListener(new View.OnClickListener() {
+                    btn_main_dialog_cancel.setOnClickListener(new View.OnClickListener() { //ออกจากระบบ
                         @Override
                         public void onClick(View view) {
                             dialog.cancel();
@@ -493,27 +543,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     });
 
                 }
+
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
                 // return true;
-
                 return false;
-
 
             }
 
         });
 
-
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult", "requestCode = " + requestCode);
+    public void test(int ar1 , int ar2){ // ฟังค์ชันที่ใช้ในการสร้าง Listview เพื่อแสดงผลรายการที่ทั้งหมด
+
+        ListSearchStore l_search_store = new ListSearchStore(arr_1[ar1], arr_4[ar2]); // โดยรับค่า ชื่อร้านและจำนวนคิวที่ต้องรอ
+        list.add(l_search_store);
+
+        adapter = new ListSearchStore_adapter();
+        lv_show_added.setAdapter(adapter);
     }
 
-
-    public void clickButtonEnter(View v) {
+    public void clickButtonEnter(View v) { //กดเพื่อไปยังหน้าเพิ่มข้อมูล
         if (v == btn_fill_inform) {
             Intent intent = new Intent(getApplicationContext(), FillActivity.class);
             startActivity(intent);
@@ -521,7 +572,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    public void logOut(View view) {
+    public void logOut(View view) { // log out สำหรับ firebase
         firebaseAuth.signOut();
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
@@ -535,6 +586,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+    // Class สร้าง adapter เพื่อช่วยสร้าง Listview จากค่าของ array ที่ส่งเข้ามาให้
     class ListSearchStore_adapter extends ArrayAdapter<ListSearchStore> {
         ListSearchStore_adapter() {
             super(MainActivity.this, R.layout.item_listview_2, list);
@@ -566,13 +618,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return view;
         }
 
-
     }
 
-    private void GoLogInScrean() {
+    private void GoLogInScrean() { // ฟังค์ชันที่ให้เรียกในกรณีที่ยังไม่ได้ Log in
         Intent intent = new Intent(this, LogInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivity(intent); // ไปยังหน้า log in
     }
 
     @Override
@@ -580,7 +631,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onStart();
         firebaseAuth.addAuthStateListener(firebaseAuthListener);
     }
-
 
     @Override
     protected void onStop() {
@@ -603,34 +653,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.blank, menu);
+        getMenuInflater().inflate(R.menu.blank, menu); // รูปแบบที่ใช้ใน Tool bar
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
-
+    // function ที่ใช้เมื่อต้องการให้แจ้งเตือน เมื่อถึงคิว โดยรับค่า เพื่อนำมาแสดงผล
     public void noti(String nameShop) {
-
-
-        String channelId = "defaultChannel";
+        String channelId = "defaultChannel_1";
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -649,15 +682,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         notificationManager.notify(1000, notificationBuilder.build());
     }
 
-
+    // function ที่ใช้เมื่อต้องการให้แจ้งเตือน เมื่อถึงคิว ต้องการให้แจ้งเตือนก่อนถึงคิวตามจำนวนที่กำหนด โดยรับค่า ชื่อร้าน และ เลขคิวที่ต้องรอก่อนหน้า
     public void notiNumber(String nameShop, int num) {
-
-
-        String channelId = "defaultChannel";
+        String channelId = "defaultChannel_2";
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -672,10 +702,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         notificationManager.notify(1000, notificationBuilder.build());
     }
 
+    // function ที่ใช้เมื่อต้องการให้แจ้งเตือน เมื่อมีการเปลี่ยนแปลงคิว โดย รับค่าชื่อร้าน และคิวปัจจุบันที่ร้านกำลังเรียกให้รับบริการ
+    public void notiEvery(String nameShop, int q_now) {
+        String channelId = "defaultChannel_3";
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.urq_notication))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("ร้าน " + nameShop)
+                .setContentText("ตอนนี้ถึงคิวที่ "+ q_now )
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1000, notificationBuilder.build());
+    }
+
+    // function ที่ใช้เมื่อต้องการให้แจ้งเตือน เมื่อถึงเวลาที่ให้แจ้งเตือนก่อนหน้า โดย รับค่าชื่อร้าน และเวลาที่เหลือในการรอของคิวนั้นๆ
     public void notiTime(String nameShop, int time) {
-
-
-        String channelId = "defaultChannel";
+        String channelId = "defaultChannel_3";
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -693,8 +742,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(1000, notificationBuilder.build());
     }
-
-
 
 
 }

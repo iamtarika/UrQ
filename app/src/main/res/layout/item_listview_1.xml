@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="70dp"
     android:orientation="horizontal"
+
+
     >
 
     <TextView
@@ -11,7 +13,7 @@
         android:layout_width="190dp"
         android:layout_height="50dp"
         android:layout_gravity="fill"
-        android:paddingLeft="10dp"
+        android:paddingLeft="15dp"
         android:paddingTop="15dp"
         android:text="ชื่อร้าน"
         android:textColor="#000000"
@@ -19,7 +21,7 @@
 
     <TextView
         android:id="@+id/tvSearch1"
-        android:layout_width="70dp"
+        android:layout_width="90dp"
         android:layout_height="50dp"
         android:layout_gravity="fill"
         android:paddingTop="15dp"
@@ -28,7 +30,7 @@
 
     <TextView
         android:id="@+id/qStore"
-        android:layout_width="55dp"
+        android:layout_width="40dp"
         android:layout_height="50dp"
         android:textSize="@dimen/text_size_30"
         android:text="00"
